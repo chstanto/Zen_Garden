@@ -41,6 +41,7 @@ void MotorDriver::set_duty (float duty)
     digitalWrite(motorpin2, HIGH); 
   };
   analogWrite(EN, duty*255/100);
+  
 }
 
 
