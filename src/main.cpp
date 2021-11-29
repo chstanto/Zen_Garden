@@ -17,8 +17,8 @@
 #define enableB PA5
 
 //Encoder Pins
-#define E1CHA PA1
-#define E1CHB PA0
+#define E1CHA PA0
+#define E1CHB PA1
 
 #define E2CHA PB4
 #define E2CHB PB5
@@ -33,6 +33,7 @@ static bool yzero = false;
 //Electromagnet Pin
 #define MagPin PA10
 
+/*
 void setup()
 {  
   Serial.begin (115200);
@@ -50,6 +51,8 @@ void loop()
 {
 
 }
+*/
+
 
 /*
 void lim_switchx()
@@ -71,15 +74,46 @@ void setup()
   pinMode(limy, INPUT);
   attachInterrupt(limx, lim_switchx, CHANGE);
   attachInterrupt(limy, lim_switchy, CHANGE);
-} */
+} 
+
+void loop()
+{
+}
+*/
 
 /*
+void setup()
+{ 
+  //Test
+  Serial.begin (115200);
+  delay(5000);
+
+  //Setup encoders
+
+  Serial <<"Setting up encoder 1!" << endl;
+  STM32Encoder enc1 (TIM5, E1CHA, E1CHB);
+  Serial <<"Setting up encoder 2!" << endl;
+  STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
+
+  for(;;)
+  {
+  delay(1000);  
+  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
+  }
+}
+
+void loop()
+{
+}
+*/
+
+
 void setup() 
 { 
   //Setup motors
   MotorDriver mot1 (inputA1, inputA2, enableA);
   MotorDriver mot2 (inputB1, inputB2, enableB);
-  
   
 
   //Test
@@ -90,9 +124,9 @@ void setup()
   int PWM = 100;
 
   //Setup encoders
-  STM32Encoder enc1 (TIM2, E1CHA, E1CHB);
-  Serial <<"Do something!" << endl;
-  STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
+  //STM32Encoder enc1 (TIM5, E1CHA, E1CHB);
+  //Serial <<"Do something!" << endl;
+  //STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
 
   Serial <<"Sending duty" << endl;
   mot1.set_duty(PWM);
@@ -101,7 +135,7 @@ void setup()
   Serial <<"wait 2.5 sec" << endl;
   delay(2500);
   //Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  //Serial <<"Motor 2 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  //Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
 
   Serial <<"Reverse duty" << endl;
@@ -111,7 +145,7 @@ void setup()
   Serial <<"wait 2.5 sec" << endl;
   delay(2500);
   //Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  //Serial <<"Motor 2 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  //Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
   
   Serial <<"Turn off" << endl;
   mot1.Disable_MOT();
@@ -122,11 +156,8 @@ void setup()
 
 void loop()
 {
-  delay(1000);
-  Serial <<"Finished Running" << endl;
-
 }
-*/
+
 
 /*
 //Motor B
