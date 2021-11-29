@@ -33,6 +33,71 @@ static bool yzero = false;
 //Electromagnet Pin
 #define MagPin PA10
 
+
+//Task Scheduler
+/*
+void setup () 
+{
+    // Start the serial port, wait a short time, then say hello. Use the
+    // non-RTOS delay() function because the RTOS hasn't been started yet
+    Serial.begin (115200);
+    delay (2000);
+    Serial << endl << endl << "Hello, I am an RTOS demonstration" << endl;
+
+    // Create a task which prints a slightly disagreeable message
+    xTaskCreate (task_motor,
+                 "motor",                         // Task name for printouts
+                 2048,                            // Stack size
+                 NULL,                            // Parameters for task fn.
+                 4,                               // Priority
+                 NULL);                           // Task handle
+
+    // Create a task which prints a more agreeable message
+    xTaskCreate (task_encoder,
+                 "encoder",
+                 2048,                            // Stack size
+                 NULL,
+                 2,                               // High priority
+                 NULL);
+
+    // Create a task which prints a more agreeable message
+    xTaskCreate (task_EM,
+                 "EM",
+                 2048,                            // Stack size
+                 NULL,
+                 5,                               // Priority
+                 NULL);
+
+    // Create a task which prints a more agreeable message
+    xTaskCreate (task_data,
+                 "data",
+                 4096,                            // Stack size
+                 NULL,
+                 1,                               // Priority
+                 NULL);
+
+    // Create a task which prints a more agreeable message
+    xTaskCreate (task_control,
+                 "control",
+                 2048,                            // Stack size
+                 NULL,
+                 1,                               // Priority
+                 NULL);
+
+    // If using an STM32, we need to call the scheduler startup function now;
+    // if using an ESP32, it has already been called for us
+    #if (defined STM32L4xx || defined STM32F4xx)
+        vTaskStartScheduler ();
+    #endif
+}
+
+void loop()
+{
+
+}
+*/
+
+//EM Testing
 /*
 void setup()
 {  
@@ -53,7 +118,7 @@ void loop()
 }
 */
 
-
+//Limit Switch Testing
 /*
 void lim_switchx()
 {
@@ -81,6 +146,7 @@ void loop()
 }
 */
 
+//Encoder Testing
 /*
 void setup()
 { 
@@ -108,7 +174,8 @@ void loop()
 }
 */
 
-
+//Motor + Encoder Testing
+/*
 void setup() 
 { 
   //Setup motors
@@ -157,8 +224,9 @@ void setup()
 void loop()
 {
 }
+*/
 
-
+//Internet Motor Code
 /*
 //Motor B
 #define motorBpin1 PA9 //IN3
