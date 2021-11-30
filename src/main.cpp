@@ -7,6 +7,8 @@
 #include "MotorDriver.h"
 #include "EMDriver.h"
 
+//Pin definition
+/*
 //Motor Pins
 #define inputA1 PB8
 #define inputA2 PB9
@@ -32,7 +34,7 @@ static bool yzero = false;
 
 //Electromagnet Pin
 #define MagPin PA10
-
+*/
 
 //Task Scheduler
 /*
@@ -45,19 +47,19 @@ void setup ()
     Serial << endl << endl << "Hello, I am an RTOS demonstration" << endl;
 
     // Create a task which prints a slightly disagreeable message
-    xTaskCreate (task_motor,
-                 "motor",                         // Task name for printouts
+    xTaskCreate (task_MOTx,
+                 "x_motor",                         // Task name for printouts
                  2048,                            // Stack size
                  NULL,                            // Parameters for task fn.
                  4,                               // Priority
                  NULL);                           // Task handle
 
     // Create a task which prints a more agreeable message
-    xTaskCreate (task_encoder,
-                 "encoder",
+    xTaskCreate (task_MOTy,
+                 "y_motor",
                  2048,                            // Stack size
                  NULL,
-                 2,                               // High priority
+                 4,                               // High priority
                  NULL);
 
     // Create a task which prints a more agreeable message
@@ -98,7 +100,7 @@ void loop()
 */
 
 //EM Testing
-
+/*
 void setup()
 {  
   Serial.begin (115200);
@@ -116,7 +118,7 @@ void loop()
 {
 
 }
-
+*/
 
 //Limit Switch Testing
 /*

@@ -1,3 +1,9 @@
+/** @file EMDriver.cpp
+ *  This class is responsible for setting up a driver to interact with the electromagnet
+ *  @author  Aaron Tran
+ *  @date    2021-Nov-30 Original file
+ */
+
 #include <Arduino.h>
 #include <PrintStream.h>
 #include <EMDriver.h>

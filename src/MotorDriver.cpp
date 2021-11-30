@@ -1,3 +1,9 @@
+/** @file MotorDriver.cpp
+ *  This class is responsible for setting up a driver to interact with motors
+ *  @author  Aaron Tran
+ *  @date    2021-Nov-30 Original file
+ */
+
 #include <Arduino.h>
 #include <PrintStream.h>
 #include <MotorDriver.h>
