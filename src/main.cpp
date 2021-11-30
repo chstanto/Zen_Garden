@@ -98,7 +98,7 @@ void loop()
 */
 
 //EM Testing
-/*
+
 void setup()
 {  
   Serial.begin (115200);
@@ -109,14 +109,14 @@ void setup()
   mag.enable();
   delay(10000);
   Serial <<"Disabling" << endl;
-
+  mag.disable();
 }
 
 void loop()
 {
 
 }
-*/
+
 
 //Limit Switch Testing
 /*
@@ -190,10 +190,10 @@ void setup()
   Serial <<"Initialized" << endl;
   int PWM = 100;
 
-  //Setup encoders
-  //STM32Encoder enc1 (TIM5, E1CHA, E1CHB);
-  //Serial <<"Do something!" << endl;
-  //STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
+  // Setup encoders
+  STM32Encoder enc1 (TIM2, E1CHA, E1CHB);
+  Serial <<"Do something!" << endl;
+  STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
 
   Serial <<"Sending duty" << endl;
   mot1.set_duty(PWM);
@@ -201,8 +201,8 @@ void setup()
 
   Serial <<"wait 2.5 sec" << endl;
   delay(2500);
-  //Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  //Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
 
   Serial <<"Reverse duty" << endl;
@@ -211,13 +211,25 @@ void setup()
   
   Serial <<"wait 2.5 sec" << endl;
   delay(2500);
-  //Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  //Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
-  
-  Serial <<"Turn off" << endl;
-  mot1.Disable_MOT();
-  mot2.Disable_MOT();
+  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
+
+  Serial <<"Reverse again" << endl;
+  mot1.set_duty(PWM);
+  mot2.set_duty(PWM);
+
+  Serial <<"wait 2.5 sec" << endl;
+  delay(2500);
+  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
+
+
+  Serial <<"Turn off motor 1" << endl;
+  mot1.Disable_MOT();
+  Serial <<"Turn off motor 2" << endl;
+  mot2.Disable_MOT();
+  Serial <<"All motors disabled" << endl;
 
 }
 
