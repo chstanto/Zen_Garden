@@ -22,6 +22,16 @@
 #define E2CHA PB4
 #define E2CHB PB5
 
+STM32Encoder enc1 (TIM5, E1CHA, E1CHB);
+STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
+float x_pos;
+float y_pos;
+float x_vel;
+float y_vel;
+float x_last;
+float y_last;
+unsigned long last_time;
+
 void task_control(void* p_params)
 {
     (void)p_params;                             // Shuts up a compiler warning
@@ -29,14 +39,22 @@ void task_control(void* p_params)
     uint8_t state = 0;
     for(;;)
     {
+        unsigned long Startime = micros();
         if(state ==0) //INIT State, find home setup everything
         {
-            STM32Encoder enc1 (TIM5, E1CHA, E1CHB);
-            STM32Encoder enc2 (TIM3, E2CHA, E2CHB);
+
             state = 1;
         }
         else if(state ==1)
         {
+            x_pos = enc1.getCount()*2*3.14159/4000*0.48;
+            y_pos = enc2.getCount()*2*3.14159/4000*0.48;
+            x_vel = (x_pos - x_last)/(millis()-last_time);
+            y_vel = (y_pos - y_last)/(millis()-last_time);
+            x_last = enc1.getCount()*2*3.14159/4000*0.48;
+            y_last = enc2.getCount()*2*3.14159/4000*0.48;
+            last_time = millis();
+            
             state = 2;
         }
         vTaskDelay(20);

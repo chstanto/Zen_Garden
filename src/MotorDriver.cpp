@@ -8,28 +8,26 @@
 #include <PrintStream.h>
 #include <MotorDriver.h>
 
-MotorDriver::MotorDriver(uint8_t motP1, uint8_t motP2, uint8_t ENP)
+MotorDriver::MotorDriver(uint8_t motP1, uint8_t motP2, uint8_t REAL_EN)
 {
   motorpin1 = motP1;
   motorpin2 = motP2;
-
-  EN = ENP;
-
+  R_EN = REAL_EN;
   pinMode(motorpin1, OUTPUT);
   pinMode(motorpin2, OUTPUT); 
-  pinMode(EN, OUTPUT);
+  pinMode(REAL_EN, OUTPUT);
 
 }
 
 
 void MotorDriver::Enable_MOT(void)
 {
-  analogWrite(EN, last_duty);
+  analogWrite(R_EN, last_duty);
 }
 
 void MotorDriver::Disable_MOT(void)
 {
-  analogWrite(EN, 0);
+  analogWrite(R_EN, 0);
 }
 
 void MotorDriver::set_duty (float duty)
@@ -46,7 +44,7 @@ void MotorDriver::set_duty (float duty)
     digitalWrite(motorpin1, LOW);
     digitalWrite(motorpin2, HIGH); 
   };
-  analogWrite(EN, duty*255/100);
+  analogWrite(R_EN, duty*255/100);
   
 }
 
