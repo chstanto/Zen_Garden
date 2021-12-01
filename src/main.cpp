@@ -180,6 +180,7 @@ void loop()
 }
 */
 
+/*
 //Motor Testing
 void setup() 
 { 
@@ -208,7 +209,7 @@ void setup()
 void loop()
 {
 }
-
+*/
 
 //Motor + Encoder Testing
 /*
@@ -239,35 +240,24 @@ void setup()
 
   Serial <<"wait 2.5 sec" << endl;
   delay(delay_val);
-  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
+  float x_pos = enc1.getCount()*2*3.14159/4000*0.48;
+  float y_pos = enc2.getCount()*2*3.14159/4000*0.48;
 
-  Serial <<"Reverse duty" << endl;
-  mot1.set_duty(-PWM);
-  mot2.set_duty(-PWM);
-  
-  Serial <<"wait 2.5 sec" << endl;
-  delay(delay_val);
-  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
+  Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
+  Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
 
-  /*Serial <<"Reverse again" << endl;
-  mot1.set_duty(PWM);
-  mot2.set_duty(PWM);
-
-  Serial <<"wait 2.5 sec" << endl;
-  delay(delay_val);
-  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
-  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
-  
-
-  Serial <<"Turn off motor 1" << endl;
-  mot1.Disable_MOT();
-  Serial <<"Turn off motor 2" << endl;
-  mot2.Disable_MOT();
-  Serial <<"All motors disabled" << endl;
-
+  for(;;)
+  {
+    if(x_pos < 5)
+    {
+      mot1.Disable_MOT();
+    }
+    if(y_pos < 5)
+    {
+      mot2.Disable_MOT();
+    }
+  }
 }
 
 void loop()
