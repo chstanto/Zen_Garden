@@ -8,5 +8,12 @@ class Control
 {
     protected:
     public:
-    
+    Control(void);
+    void run(float pos_ref, float pos, float vel_ref, float vel);
+    float Kd = 1.003; // Derivative gain
+    float Kp = 0.0203; // Proportional gain
+
+    float pos_ref; //Placeholder reference position, should be tak
+    float vel_ref;
+    float PWM;
 };

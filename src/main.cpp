@@ -3,12 +3,16 @@
 #if (defined STM32L4xx || defined STM32F4xx)
     #include <STM32FreeRTOS.h>
 #endif
+
+#include "taskshare.h"         // Header for inter-task shared data
+#include "taskqueue.h"         // Header for inter-task data queues
+#include "shares.h"            // Header for shares used in this project
+
 #include "EncoderDriver.h"
 #include "MotorDriver.h"
 #include "EMDriver.h"
 
 //Pin definition
-/*
 //Motor Pins
 #define inputA1 PB8
 #define inputA2 PB9
@@ -34,7 +38,7 @@ static bool yzero = false;
 
 //Electromagnet Pin
 #define MagPin PA10
-*/
+
 
 //Task Scheduler
 /*
@@ -149,7 +153,7 @@ void loop()
 */
 
 //Encoder Testing
-/*
+/*  
 void setup()
 { 
   //Test
@@ -176,6 +180,36 @@ void loop()
 }
 */
 
+//Motor Testing
+void setup() 
+{ 
+  //Setup motors
+  MotorDriver mot1 (inputA1, inputA2, enableA);
+  MotorDriver mot2 (inputB1, inputB2, enableB);
+  
+
+  //Test
+  Serial.begin (115200);
+  delay(5000);
+  
+  Serial <<"Initialized" << endl;
+  int PWM = 100;
+  int delay_val = 100;
+
+  Serial <<"Sending duty" << endl;
+  mot1.set_duty(PWM);
+  mot2.set_duty(PWM);
+
+  //Disable
+  mot1.Disable_MOT();
+  mot2.Disable_MOT();
+}
+
+void loop()
+{
+}
+
+
 //Motor + Encoder Testing
 /*
 void setup() 
@@ -188,9 +222,11 @@ void setup()
   //Test
   Serial.begin (115200);
   delay(5000);
-
+  
   Serial <<"Initialized" << endl;
-  int PWM = 100;
+  int PWM = 60;
+  int delay_val = 100;
+
 
   // Setup encoders
   STM32Encoder enc1 (TIM2, E1CHA, E1CHB);
@@ -202,7 +238,7 @@ void setup()
   mot2.set_duty(PWM);
 
   Serial <<"wait 2.5 sec" << endl;
-  delay(2500);
+  delay(delay_val);
   Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
   Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
@@ -212,20 +248,19 @@ void setup()
   mot2.set_duty(-PWM);
   
   Serial <<"wait 2.5 sec" << endl;
-  delay(2500);
+  delay(delay_val);
   Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
   Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
 
-
-  Serial <<"Reverse again" << endl;
+  /*Serial <<"Reverse again" << endl;
   mot1.set_duty(PWM);
   mot2.set_duty(PWM);
 
   Serial <<"wait 2.5 sec" << endl;
-  delay(2500);
+  delay(delay_val);
   Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "deg" << endl;
   Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "deg" << endl;
-
+  
 
   Serial <<"Turn off motor 1" << endl;
   mot1.Disable_MOT();

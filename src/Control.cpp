@@ -10,3 +10,18 @@ Control::Control(void)
 {
 
 }
+
+void Control::run(float pos_ref, float pos, float vel_ref, float vel)
+{
+
+    PWM =  Kp*(pos_ref-pos) + Kd*(vel_ref - vel);
+    if(PWM>100)
+    {
+        PWM = 100;
+    }
+    else if(PWM<-100)
+    {
+        PWM = -100;
+    }
+
+}
