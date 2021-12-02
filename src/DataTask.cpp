@@ -12,15 +12,18 @@
 #endif
 #include "DataTask.h"
 
+#include <shares.h>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <string>
 
 /** @brief   
  *  @details 
  *  @param   
  */
 
-/*
+
 void task_show_data (void* p_params)
 {
     uint8_t state = 0;                 // State machine takes data or doesn't
@@ -31,15 +34,17 @@ void task_show_data (void* p_params)
         // In state 0 we're waiting for signal from control task to pull data 
         if (state == 0)
         {
-            std::ofstream Input_Data;
-            Input_Data.open("square_data.csv");
-            int x , y ;
+            //std::ofstream Input_Data;
+            //Input_Data.open("square_data.csv");
+            std::ofstream Input_Data("square_data.csv");
+            //std::vector<string> x , y;
+            std::string x , y ;
 
-            while (getline(Input_Data, x, ',')) 
+            while (std::getline(Input_Data, x, ',')) 
             {
                 xref.put(x);
 
-                getline(Input_Data, y) ;
+                std::getline(Input_Data, y);
                 yref.put(y);
             }
             Input_Data.close();
@@ -58,14 +63,13 @@ void task_show_data (void* p_params)
                 Output_Data << encoder_queue.get() << motor_queue.get() << "\n";
                 
             }
-            */
+            
             state = 0;
             Output_Data.close();
+            */
         }
 
         // This task always runs once every 5 ms
         vTaskDelay (5);
     }
 }
-
-*/
