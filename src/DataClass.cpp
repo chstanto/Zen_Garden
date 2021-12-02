@@ -8,6 +8,7 @@
 #include <Arduino.h>
 #include "DataClass.h"
 #include <fstream>
+#include <ios>
 #include <string>
 #include <vector>
 #include <utility> // std::pair
@@ -18,11 +19,26 @@
  *  @details 
  *  @param   
  */
+/*
+void DataClass::Input_Data(char)
+{
+    fstream fout;
+    // opens an existing csv file or creates a new file.
+    fout.open("reportcard.csv", ios::out | ios::app);
+
+
+}
+void DataClass::Output_Data(void)
+{
+
+}
+*/
+/*
 
 void DataClass::Input_Data(char filename)
 {
-    std::vector<std::pair<std::string, std::vector<int>>> read_csv(std::string filename)
-    {
+    std::vector<std::pair<std::string, std::vector<int>>> read_csv(std::string filename);
+    
     // Reads a CSV file into a vector of <string, vector<int>> pairs where
     // each pair represents <column name, column values>
 
@@ -82,12 +98,11 @@ void DataClass::Input_Data(char filename)
 
     // Close file
     myFile.close();
-
-    return result;
 }
 
 void DataClass::Output_Data(std::string filename, std::vector<std::pair<std::string, std::vector<int>>> dataset)
 {
+    std::string filename, std::vector<std::pair<std::string, std::vector<int>>> dataset;
     // Make a CSV file with one or more columns of integer values
     // Each column of data is represented by the pair <column name, column data>
     //   as std::pair<std::string, std::vector<int>>
@@ -119,3 +134,4 @@ void DataClass::Output_Data(std::string filename, std::vector<std::pair<std::str
     // Close the file
     myFile.close();
 }
+*/
