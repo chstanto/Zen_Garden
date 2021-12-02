@@ -42,9 +42,11 @@ Queue<uint8_t> data_NOTavail(30, "Data");
 //Limit Switch Pins
 #define limx PA4
 #define limy PB0
+int xread = 0
+int yread = 0
 
-static bool xzero = false;
-static bool yzero = false;
+bool xzero = false;
+bool yzero = false;
 
 //Electromagnet Pin
 #define MagPin PA10
@@ -172,9 +174,12 @@ void setup()
   //Setup limit switches
   pinMode(limx, INPUT);
   pinMode(limy, INPUT);
+
+  xread = digitalRead(limx);
+  yread = digitalRead(limy);
   
-  //attachInterrupt(limx, lim_switchx, FALLING);
-  //attachInterrupt(limy, lim_switchy, FALLING);
+  attachInterrupt(limx, lim_switchx, FALLING);
+  attachInterrupt(limy, lim_switchy, FALLING);
   
   for(;;)
   {
