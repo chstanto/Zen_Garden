@@ -64,4 +64,24 @@ STM32Encoder::STM32Encoder (TIM_TypeDef* timer, uint8_t pin1, uint8_t pin2)
     // The reference in this function's comment sort of explains how it works
     timer->SMCR |= TIM_SMCR_SMS_0 | TIM_SMCR_SMS_1;
     timer->CR1 |= TIM_CR1_CEN;
+
+    ctNow = p_timer ->getCount();
+
+    realCt = p_timer ->getCount();
+}
+
+int32_t STM32Encoder::update(void)
+{
+    delta = (int32_t)(p_timer->getCount()) - (int32_t)ctNow;
+    if (delta >= 0xFFFF/2)
+    {
+        delta -= 0xFFFF;
+    }
+    else if (delta <= -0xFFFF/2)
+    {
+        delta += 0xFFFF;
+    }
+    ctNow = p_timer ->getCount();
+    realCt += delta;
+    return realCt;
 }

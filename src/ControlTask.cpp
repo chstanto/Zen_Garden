@@ -72,32 +72,33 @@ void task_control(void* p_params)
     (void)p_params;                             // Shuts up a compiler warning
     uint8_t state = 0;
     //Position and velocity declarations
-    float x_pos;
-    float y_pos;
-    float x_vel;
-    float y_vel;
-    float x_last;
-    float y_last;
-    float x_ref;
-    float y_ref;
-    float xdot_ref;
-    float ydot_ref;
+    float x_pos = 0;
+    float y_pos = 0;
+    float x_vel = 0;
+    float y_vel = 0;
+    float x_last = 0;
+    float y_last = 0;
+    float x_ref = 0;
+    float y_ref = 0;
+    float xdot_ref = 0;
+    float ydot_ref = 0;
     float speed = 0.1; //Desired operating speed, [in/s]
-    float x_dist;
-    float y_dist;
-    float ang;
-    unsigned long last_time;
+    float x_dist = 0;
+    float y_dist = 0;
+    float ang = 0;
+    unsigned long last_time = 0;
     
     pinMode(limx, INPUT);
     pinMode(limy, INPUT);
     attachInterrupt(limx, lim_switchx, RISING);
     attachInterrupt(limy, lim_switchy, RISING);    
 
-    //bool NEGx = false;
-    //bool NEGy = false;
+    bool firstx = false;
+    bool firsty = false;
     for(;;)
     {
         unsigned long Startime = micros();
+        mag.enable();
         if(state ==0) //INIT State, find home setup everything
         {
             if (xNOThome)
@@ -122,21 +123,44 @@ void task_control(void* p_params)
             {}
             else
             {
-                mag.enable();
+                xMOT.set_duty(15);
+                yMOT.set_duty(15);
+                x_ref = xref.get();
+                y_ref = yref.get();
                 state = 1;
             }
         }
         else if(state ==1)
+        {
+            //Prep to first position
+            x_pos = xENC.update()*1.571/4000;
+            y_pos = yENC.update()*1.571/4000;           
+            if (x_pos >= x_ref)
+            {
+                xMOT.Disable_MOT();
+            }
+            if (y_pos >= y_ref)
+            {
+                yMOT.Disable_MOT();
+            }
+            if (firstx & firsty)
+            {
+                state = 2;
+            }
+        }
+        else if(state ==2)
         {   
             //Read current values
-            x_pos = xENC.getCount()*1.571/4000;
-            y_pos = yENC.getCount()*1.571/4000;
+            x_pos = xENC.update()*1.571/4000;
+            y_pos = yENC.update()*1.571/4000;
             x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
             y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
             x_last = x_pos;
             y_last = y_pos;
             last_time = micros();
-            
+            x_ref = xref.get();
+            y_ref = yref.get();
+
             //Determine reference velocities
             x_dist = x_ref - x_pos;
             y_dist = y_ref - y_pos;
@@ -148,27 +172,15 @@ void task_control(void* p_params)
             xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
             yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
 
+            if (data_NOTavail.get())
+            {
+                state = 3;
+            }
+        }
+        else if(state ==3)
+        {
+            mag.disable();
         }
         vTaskDelay(20);
     }
-
-
-
-
-    //MOTx handling
-    /*
-    ##@brief motor 1 measured speed [RPM]
-    x_vel = 
-    self.CTRL1.run(self.omega_ref[self.n],self.omega_meas1, self.theta_ref[self.n], self.enc1.get_position())   
-    self.mot1.set_duty(self.CTRL1.PWM)
-    self.enc1.run()
-    shares.enc1_err = (self.omega_ref[self.n] - self.omega_meas1)**2 +  (self.theta_ref[self.n] - self.enc1.get_position())**2           
-    shares.enc1_pos = self.enc1.get_position()
-    shares.enc1_speed = self.omega_meas1     
-    */
-    //MOTy handling
-
-    
-    
-    vTaskDelay (20);
 }

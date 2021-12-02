@@ -175,13 +175,17 @@ void setup()
 
   for(;;)
   {
-  delay(100);  
-  //x_pos = enc1.getCount()*1.571/4000;
-  //y_pos = enc2.getCount()*1.571/4000;
-  //Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
-  //Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
-  Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "degrees" << endl;
-  Serial <<"Motor 2 Position:" << enc2.getCount()*360/4000 << "degrees" << endl;
+  delay(2500);  
+  x_pos = enc1.update()*1.571/4000;
+  y_pos = enc2.update()*1.571/4000;
+  Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
+  Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
+  //Serial <<"Motor 1 Position:" << enc1.update()*360/4000 << "degrees" << endl;
+  //Serial <<"Motor 2 Position:" << enc2.update()*360/4000 << "degrees" << endl;
+  //Serial <<"Motor 1 delta:" << enc1.update() << "ticks" << endl;
+  //Serial <<"Motor 1 Position:" << enc1.delta << "ticks" << endl;
+  //Serial <<"Motor 2 delta:" << enc2.update() << "ticks" << endl;
+  //Serial <<"Motor 2 Position:" << enc2.delta << "ticks" << endl;
   }
 }
 
@@ -272,8 +276,8 @@ void setup()
   Serial <<"wait 2.5 sec" << endl;
   delay(delay_val);
 
-  float x_pos = enc1.getCount()*2*3.14159/4000*0.24;
-  float y_pos = enc2.getCount()*2*3.14159/4000*0.24;
+  float x_pos = enc1.update()*2*3.14159/4000*0.24;
+  float y_pos = enc2.update()*2*3.14159/4000*0.24;
 
   Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
   Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;

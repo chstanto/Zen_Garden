@@ -11,13 +11,15 @@
     #include <STM32FreeRTOS.h>
 #endif
 #include "DataTask.h"
-#include "square_data.csv"
-#include "fstream.h"
+//#include "square_data.csv"
+//#include "fstream.h"
 
 /** @brief   
  *  @details 
  *  @param   
  */
+
+/*
 void task_show_data (void* p_params)
 {
     uint8_t state = 0;                 // State machine takes data or doesn't
@@ -85,3 +87,4 @@ void task_show_data (void* p_params)
         vTaskDelay (5);
     }
 }
+*/

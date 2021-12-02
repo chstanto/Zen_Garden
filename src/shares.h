@@ -15,10 +15,12 @@
 
 
 // A share which holds a counter of how many times a simulated event occurred
-//extern Share<bool> bool_var; example of share declaration
+// extern Share<bool> bool_var; example of share declaration
 
 // A queue which triggers a task to print the count at certain times
-//extern Queue<uint16_t> data_queue; example of queue declaration
+extern Queue<float> xref;
+extern Queue<float> yref;
+extern Queue<bool> data_NOTavail;
 
 
 #endif // _SHARES_H_

@@ -6,9 +6,10 @@
 
 #include "Control.h"
 
-Control::Control(void)
+Control::Control(float Der_gain, float Prop_gain)
 {
-
+    Kd = Der_gain;
+    Kp = Prop_gain;
 }
 
 void Control::run(float pos_ref, float pos, float vel_ref, float vel)
