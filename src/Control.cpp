@@ -6,21 +6,29 @@
 
 #include "Control.h"
 
-Control::Control(float Der_gain, float Prop_gain)
+Control::Control(float vel_gain, float pos_gain)
 {
-    Kd = Der_gain;
-    Kp = Prop_gain;
+    Kd = vel_gain;
+    Kp = pos_gain;
 }
 
 void Control::run(float pos_ref, float pos, float vel_ref, float vel)
 {
 
-    PWM =  Kp*(pos_ref-pos) + Kd*(vel_ref - vel);
-    if(PWM>100)
+    PWM =  100*(Kp*(pos_ref-pos) + Kd*(vel_ref - vel));
+    if (PWM >= 0)
+    {
+        PWM += 15;
+    }
+    else
+    {
+        PWM -= 15;
+    }
+    if (PWM > 100)
     {
         PWM = 100;
     }
-    else if(PWM<-100)
+    else if (PWM < -100)
     {
         PWM = -100;
     }

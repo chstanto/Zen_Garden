@@ -12,14 +12,15 @@
 #include "MotorDriver.h"
 #include "EMDriver.h"
 
-/*
+
 #include "ControlTask.h"
 #include "TestTask.h"
+
 
 Queue<float> xref(30, "Data");
 Queue<float> yref(30, "Data");
 Queue<uint8_t> data_NOTavail(30, "Data");
-*/
+
 
 //Pin definition
 
@@ -42,8 +43,8 @@ Queue<uint8_t> data_NOTavail(30, "Data");
 //Limit Switch Pins
 #define limx PA4
 #define limy PB0
-int xread = 0
-int yread = 0
+int xread = 0;
+int yread = 0;
 
 bool xzero = false;
 bool yzero = false;
@@ -116,7 +117,6 @@ void loop()
 */
 
 //Control Task Testing
-/*
 void setup()
 {
 
@@ -141,7 +141,7 @@ void loop()
 {
 
 }
-*/
+
 
 //EM Testing
 /*
@@ -165,27 +165,41 @@ void loop()
 */
 
 //Limit Switch Testing
+/*
+void lim_switchx(void)
+{
+  Serial << "called lim_switchx()"<< endl;
+  xzero = true;
+  //enc1.zero();
+}
 
+void lim_switchy(void)
+{
+  Serial << "called lim_switchy()"<< endl;
+  yzero = true;
+  //enc2.zero();
+}
 
 void setup() 
 { 
   Serial.begin (115200);
   delay(5000);
   //Setup limit switches
-  pinMode(limx, INPUT);
-  pinMode(limy, INPUT);
+  pinMode(limx, INPUT_PULLUP);
+  pinMode(limy, INPUT_PULLUP);
 
-  xread = digitalRead(limx);
-  yread = digitalRead(limy);
-  
-  attachInterrupt(limx, lim_switchx, FALLING);
-  attachInterrupt(limy, lim_switchy, FALLING);
+  attachInterrupt((limx), lim_switchx, CHANGE);
+  attachInterrupt((limy), lim_switchy, CHANGE);
   
   for(;;)
   {
   delay(500);
+  xread = digitalRead(limx);
+  yread = digitalRead(limy);
+  Serial << "xread is: " << xread << endl;
+  Serial << "yread is: " << yread << endl << endl;
   Serial << "limx is: " << xzero << endl;
-  Serial << "limy is: " << yzero << endl;    
+  Serial << "limy is: " << yzero << endl << endl;    
   }
 } 
 
@@ -193,21 +207,7 @@ void loop()
 {
 
 }
-
-void lim_switchx()
-{
-  Serial << "called lim_switchx()"<< endl;
-  xzero = true;
-  //enc1.zero();
-}
-
-void   lim_switchy()
-{
-  Serial << "called lim_switchy()"<< endl;
-  yzero = true;
-  //enc2.zero();
-}
-
+*/
 
 //Encoder Testing
 /*
@@ -233,8 +233,8 @@ void setup()
   for(;;)
   {
   delay(2500);  
-  x_pos = enc1.update()*1.571/4000;
-  y_pos = enc2.update()*1.571/4000;
+  x_pos = -enc1.update()*1.571/4000;
+  y_pos = -enc2.update()*1.571/4000;
   Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
   Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
   //Serial <<"Motor 1 Position:" << enc1.update()*360/4000 << "degrees" << endl;

@@ -8,7 +8,7 @@ class Control
 {
     protected:
     public:
-    Control(float Der_gain, float Prop_gain);
+    Control(float vel_gain, float pos_gain);
     void run(float pos_ref, float pos, float vel_ref, float vel);
     float Kd = 1.003; // Derivative gain
     float Kp = 0.0203; // Proportional gain

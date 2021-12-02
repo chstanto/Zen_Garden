@@ -4,7 +4,7 @@
  *  @date    2021-Nov-29 Original file
  */
 
-/*
+
 #include <Arduino.h>
 #include <PrintStream.h>
 #if (defined STM32L4xx || defined STM32F4xx)
@@ -39,32 +39,17 @@
 #define MagPin PA10
 
 //Limit Switch Pins
-#define limx PA4
-#define limy PB0
+#define limx PB0
+#define limy PA4
 
 //Driver setups
 MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
-STM32Encoder yENC (TIM5, E1CHA, E1CHB);
+STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (1.003, 0.0203);
-Control yCONT (1.003, 0.0203);
+Control xCONT (0, 0.203); // 1.003, 0.0203
+Control yCONT (0, 0.203); //0.0203
 EMDriver mag (MagPin);
-
-bool xNOThome = true; 
-bool yNOThome = true;
-
-void lim_switchx()
-{
-    xNOThome = false;
-    xENC.zero();
-}
-
-void lim_switchy()
-{
-    yNOThome = false;
-    yENC.zero();
-}
 
 void task_control(void* p_params)
 {
@@ -90,11 +75,13 @@ void task_control(void* p_params)
     float ang = 0;
     unsigned long last_time = 0;
     uint8_t flag;
+    int delay_val = 100;
     
-    pinMode(limx, INPUT);
-    pinMode(limy, INPUT);
-    attachInterrupt(limx, lim_switchx, RISING);
-    attachInterrupt(limy, lim_switchy, RISING);    
+    pinMode(limx, INPUT_PULLUP);
+    pinMode(limy, INPUT_PULLUP);
+
+    uint8_t xNOThome = digitalRead(limx);
+    uint8_t yNOThome = digitalRead(limy);
 
     bool firstx = false;
     bool firsty = false;
@@ -104,27 +91,32 @@ void task_control(void* p_params)
         mag.enable();
         if(state ==0) //INIT State, find home setup everything
         {
+            xNOThome = digitalRead(limx);
+            yNOThome = digitalRead(limy);
             if (xNOThome)
             {
-                xMOT.set_duty(0); 
+                xMOT.set_duty(-20); 
             }
             else
             {
+                xENC.zero();
                 xMOT.Disable_MOT();
-                detachInterrupt(digitalPinToInterrupt(limx));    //Detach interrupts to avoid accidentally rezeroing            
             }
             if (yNOThome)
             {
-                yMOT.set_duty(0);
+                yMOT.set_duty(-30);
             }
             else
             {
+                yENC.zero();
                 yMOT.Disable_MOT();
-                detachInterrupt(digitalPinToInterrupt(limy));    //Detach interrupts to avoid accidentally rezeroing    
-
             }
             if (xNOThome | yNOThome)
-            {}
+            {
+                Serial << "You are in state " << state << endl;
+                Serial << "xNOThome is " << xNOThome << endl;
+                Serial << "yNOThome is " << yNOThome << endl;
+            }
             else
             {
                 xMOT.set_duty(25);
@@ -149,9 +141,17 @@ void task_control(void* p_params)
                 firsty = true;
                 yMOT.Disable_MOT();
             }
+
             if (firstx & firsty)
             {
                 state = 2;
+                delay_val = 100;
+            }
+            else
+            {
+                Serial << "You are in state " << state << endl;
+                Serial << "x position:" << x_pos << endl;
+                Serial << "y position:" << y_pos << endl << endl;
             }
         }
         else if(state ==2)
@@ -178,22 +178,50 @@ void task_control(void* p_params)
             xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
             yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
 
+            xMOT.set_duty(xCONT.PWM);
+            yMOT.set_duty(xCONT.PWM);
+
+
             flag = data_NOTavail.get();
 
             if (flag)
             {
+                xMOT.Disable_MOT();
+                yMOT.Disable_MOT();
                 state = 3;
             }
+            Serial << "You are in state " << state << endl;
+            Serial << "Data not available?: " << flag << endl;
+
+            Serial << "x pos: " << x_pos << "[in]"<< endl;
+            Serial << "y pos: " << y_pos << "[in]"<< endl;
+
+            Serial << "x ref: " << x_ref << "[in]"<< endl;
+            Serial << "y ref: " << y_ref << "[in]"<< endl;
+
+            Serial << "x error: " << x_dist << "[in]"<< endl;
+            Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+            
+            Serial << "x vel: " << x_vel << "[in]"<< endl;
+            Serial << "y vel: " << y_vel << "[in]"<< endl;
+
+            Serial << "x vel ref: " << xdot_ref << "[in]"<< endl;
+            Serial << "y vel ref: " << ydot_ref << "[in]"<< endl;
+
+            Serial << "x vel error: " << xdot_ref - x_vel << "[in]"<< endl;
+            Serial << "y vel error: " << ydot_ref - y_vel << "[in]"<< endl << endl;
+
+            Serial << "xPWM: " << xCONT.PWM << "%" << endl;
+            Serial << "yPWM: " << yCONT.PWM << "%" << endl 
+            <<"-----------------------------------------------------------------------------------------------------" <<endl;
+
+           
+
         }
         else if(state ==3)
         {
             mag.disable();
         }
-        Serial << "You are in state " << state << endl;
-        Serial << "xNOThome is " << xNOThome << endl;
-        Serial << "yNOThome is " << yNOThome << endl;
-
-        vTaskDelay(20);
+        vTaskDelay(delay_val);
     }
 }
-*/

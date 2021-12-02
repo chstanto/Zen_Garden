@@ -23,7 +23,7 @@
  *  @param   
  */
 
-
+/*
 void task_show_data (void* p_params)
 {
     uint8_t state = 0;                 // State machine takes data or doesn't
@@ -53,7 +53,7 @@ void task_show_data (void* p_params)
         // In state 1 data is being recorded until the queue is empty
         else if (state == 1)
         {
-            /*std::ofstream Output_Data;
+            std::ofstream Output_Data;
             Output_Data.open("Output_Data.csv");
             Output_Data << "X Motor,X Encoder,Y Motor,Y Encoder \n";
 
@@ -66,10 +66,11 @@ void task_show_data (void* p_params)
             
             state = 0;
             Output_Data.close();
-            */
+            
         }
 
         // This task always runs once every 5 ms
         vTaskDelay (5);
     }
 }
+*/
