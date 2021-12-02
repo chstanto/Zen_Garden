@@ -51,6 +51,7 @@ public:
      */
     void zero (void)
     {
+        realCt = 0;
         p_timer->setCount (0);
     }
 
@@ -68,4 +69,13 @@ public:
     {
         p_timer->resume ();
     }
+
+    int32_t update (void);
+
+    uint16_t ctNow;
+
+    int32_t realCt;
+
+    int32_t delta;
+
 };
