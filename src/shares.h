@@ -20,7 +20,7 @@
 // A queue which triggers a task to print the count at certain times
 extern Queue<float> xref;
 extern Queue<float> yref;
-extern Queue<bool> data_NOTavail;
+extern Queue<uint8_t> data_NOTavail;
 
 
 #endif // _SHARES_H_
