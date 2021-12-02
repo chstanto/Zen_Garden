@@ -11,8 +11,9 @@
     #include <STM32FreeRTOS.h>
 #endif
 #include "DataTask.h"
-//#include "square_data.csv"
-//#include "fstream.h"
+
+#include <fstream>
+#include <iostream>
 
 /** @brief   
  *  @details 
@@ -30,56 +31,32 @@ void task_show_data (void* p_params)
         // In state 0 we're waiting for signal from control task to pull data 
         if (state == 0)
         {
-            if (pull_data.get ())
+            std::ofstream Input_Data;
+            Input_Data.open("square_data.csv");
+            int x , y ;
+
+            while (getline(Input_Data, x, ',')) 
             {
+                x_queue.put(x);
 
-                fstream input;
-                input.open("square_data.csv", ios::in);
-
-                // Read the Data from the file
-                // as String Vector
-                vector<string> row;
-                string line, word, temp;
-            
-                while (input >> temp) 
-                {
-            
-                    row.clear();
-            
-                    // read an entire row and
-                    // store it in a string variable 'line'
-                    getline(input, line);
-            
-                    // used for breaking words
-                    stringstream s(line);
-            
-                    // read every column data of a row and
-                    // store it in a string variable, 'word'
-                    while (getline(s, word, ', ')) {
-            
-                        // add all the column data
-                        // of a row to a vector
-                        row.push_back(word);
-                    }
-
-
-                while()
-                pull_data.put (false);      // So we don't record forever
-                counter = 0;
-                state = 1;
+                getline(Input_Data, y) ;
+                y_queue.put(y);
             }
+            Input_Data.close;
+            state = 1;
         }
-
         // In state 1 data is being recorded until the queue is empty
         else if (state == 1)
         {
-            // Read one data point and immediately stuff it into the queue
-            data_queue.put (analogRead (DATA_ACQ_PIN));
+            std::ofstream Output_Data;
+            Output_Data.open("Output_Data.csv");
+            Output_Data << "X Motor,X Encoder,Y Motor,Y Encoder \n";
 
             // Check if we've taken the required number of data points yet
-            if (++counter > POINTS_PER_SET)
+            if (encoder_queue.get())
             {
-                state = 0;
+                Output_Data << encoder_queue.get() << motor_queue.get() << "\n";
+                
             }
         }
 
@@ -87,4 +64,5 @@ void task_show_data (void* p_params)
         vTaskDelay (5);
     }
 }
+
 */
