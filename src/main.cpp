@@ -12,7 +12,17 @@
 #include "MotorDriver.h"
 #include "EMDriver.h"
 
+/*
+#include "ControlTask.h"
+#include "TestTask.h"
+
+Queue<float> xref(30, "Data");
+Queue<float> yref(30, "Data");
+Queue<uint8_t> data_NOTavail(30, "Data");
+*/
+
 //Pin definition
+
 //Motor Pins
 #define inputA1 PB8
 #define inputA2 PB9
@@ -103,6 +113,34 @@ void loop()
 }
 */
 
+//Control Task Testing
+/*
+void setup()
+{
+
+
+  xTaskCreate (task_control,
+               "control",
+               2048,                            // Stack size
+               NULL,
+               1,                               // Priority
+               NULL);
+  xTaskCreate (task_test,
+               "send data",
+               2048,                            // Stack size
+               NULL,
+               1,                               // Priority
+               NULL);
+  #if (defined STM32L4xx || defined STM32F4xx)
+    vTaskStartScheduler ();
+  #endif
+}
+void loop()
+{
+
+}
+*/
+
 //EM Testing
 /*
 void setup()
@@ -125,35 +163,49 @@ void loop()
 */
 
 //Limit Switch Testing
-/*
-void lim_switchx()
-{
-  xzero = digitalRead(limx);
-  enc1.zero();
-}
 
-void lim_switchy()
-{
-  yzero = digitalRead(limx);
-  enc2.zero();
-}
 
 void setup() 
 { 
+  Serial.begin (115200);
+  delay(5000);
   //Setup limit switches
   pinMode(limx, INPUT);
   pinMode(limy, INPUT);
-  attachInterrupt(limx, lim_switchx, CHANGE);
-  attachInterrupt(limy, lim_switchy, CHANGE);
+  
+  //attachInterrupt(limx, lim_switchx, FALLING);
+  //attachInterrupt(limy, lim_switchy, FALLING);
+  
+  for(;;)
+  {
+  delay(500);
+  Serial << "limx is: " << xzero << endl;
+  Serial << "limy is: " << yzero << endl;    
+  }
 } 
 
 void loop()
 {
+
 }
-*/
+
+void lim_switchx()
+{
+  Serial << "called lim_switchx()"<< endl;
+  xzero = true;
+  //enc1.zero();
+}
+
+void   lim_switchy()
+{
+  Serial << "called lim_switchy()"<< endl;
+  yzero = true;
+  //enc2.zero();
+}
+
 
 //Encoder Testing
-
+/*
 void setup()
 { 
   //Test
@@ -192,7 +244,7 @@ void setup()
 void loop()
 {
 }
-
+*/
 
 //Motor Testing
 /*
@@ -207,32 +259,14 @@ void setup()
   delay(5000);
   
   Serial <<"Initialized" << endl;
-  int PWM = 15;
+  int PWM = -15;
   int delay_val = 500;
 
   Serial <<"Sending duty" << endl;
   mot1.set_duty(PWM);
   mot2.set_duty(PWM);
-
   delay(delay_val);
-  
-  PWM *= -1;
-  Serial <<"Lower duty" << endl;
-  mot1.set_duty(PWM);
-  mot2.set_duty(PWM);
 
-  delay(delay_val);
-  PWM *= -1;
-  Serial <<"Lower duty" << endl;
-  mot1.set_duty(PWM);
-  mot2.set_duty(PWM);
-
-  delay(delay_val);
-  PWM *= -1;
-  Serial <<"Lower duty" << endl;
-  mot1.set_duty(PWM);
-  mot2.set_duty(PWM);
-  
   //Disable
   mot1.Disable_MOT();
   mot2.Disable_MOT();
@@ -270,32 +304,22 @@ void setup()
   enc2.zero();
 
   Serial <<"Sending duty" << endl;
-  mot1.set_duty(PWM);
+  //mot1.set_duty(PWM);
   mot2.set_duty(PWM);
 
-  Serial <<"wait 2.5 sec" << endl;
-  delay(delay_val);
-
-  float x_pos = enc1.update()*2*3.14159/4000*0.24;
-  float y_pos = enc2.update()*2*3.14159/4000*0.24;
+  float x_pos = -enc1.update()*2*3.14159/4000*0.24;
+  float y_pos = -enc2.update()*2*3.14159/4000*0.24;
 
   Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
   Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
 
-  for(;;)
-  {
-    delay(50);
-    Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
-    Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
-    if(x_pos > 5)
-    {
-      mot1.Disable_MOT();
-    }
-    if(y_pos > 5)
-    {
-      mot2.Disable_MOT();
-    }
-  }
+  delay(2500);
+  x_pos = -enc1.update()*2*3.14159/4000*0.24;
+  y_pos = -enc2.update()*2*3.14159/4000*0.24;
+  Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
+  Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;  
+  mot1.Disable_MOT();
+  mot2.Disable_MOT();
 }
 
 void loop()

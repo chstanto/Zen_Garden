@@ -4,7 +4,7 @@
  *  @date    2021-Nov-29 Original file
  */
 
-
+/*
 #include <Arduino.h>
 #include <PrintStream.h>
 #if (defined STM32L4xx || defined STM32F4xx)
@@ -43,10 +43,10 @@
 #define limy PB0
 
 //Driver setups
-MotorDriver xMOT (inputA1, inputA2, enableA);
-MotorDriver yMOT (inputB1, inputB2, enableB);
-STM32Encoder xENC (TIM5, E1CHA, E1CHB);
-STM32Encoder yENC (TIM3, E2CHA, E2CHB);
+MotorDriver yMOT (inputA1, inputA2, enableA);
+MotorDriver xMOT (inputB1, inputB2, enableB);
+STM32Encoder yENC (TIM5, E1CHA, E1CHB);
+STM32Encoder xENC (TIM3, E2CHA, E2CHB);
 Control xCONT (1.003, 0.0203);
 Control yCONT (1.003, 0.0203);
 EMDriver mag (MagPin);
@@ -68,6 +68,8 @@ void lim_switchy()
 
 void task_control(void* p_params)
 {
+    Serial.begin (115200);
+    delay(5000);
     //Setup Code
     (void)p_params;                             // Shuts up a compiler warning
     uint8_t state = 0;
@@ -87,6 +89,7 @@ void task_control(void* p_params)
     float y_dist = 0;
     float ang = 0;
     unsigned long last_time = 0;
+    uint8_t flag;
     
     pinMode(limx, INPUT);
     pinMode(limy, INPUT);
@@ -103,7 +106,7 @@ void task_control(void* p_params)
         {
             if (xNOThome)
             {
-                xMOT.set_duty(-15); 
+                xMOT.set_duty(0); 
             }
             else
             {
@@ -112,19 +115,20 @@ void task_control(void* p_params)
             }
             if (yNOThome)
             {
-                yMOT.set_duty(-15);
-                detachInterrupt(digitalPinToInterrupt(limy));    //Detach interrupts to avoid accidentally rezeroing    
+                yMOT.set_duty(0);
             }
             else
             {
                 yMOT.Disable_MOT();
+                detachInterrupt(digitalPinToInterrupt(limy));    //Detach interrupts to avoid accidentally rezeroing    
+
             }
-            if (xNOThome & yNOThome)
+            if (xNOThome | yNOThome)
             {}
             else
             {
-                xMOT.set_duty(15);
-                yMOT.set_duty(15);
+                xMOT.set_duty(25);
+                yMOT.set_duty(25);
                 x_ref = xref.get();
                 y_ref = yref.get();
                 state = 1;
@@ -133,14 +137,16 @@ void task_control(void* p_params)
         else if(state ==1)
         {
             //Prep to first position
-            x_pos = xENC.update()*1.571/4000;
-            y_pos = yENC.update()*1.571/4000;           
+            x_pos = -xENC.update()*1.571/4000;
+            y_pos = -yENC.update()*1.571/4000;           
             if (x_pos >= x_ref)
             {
+                firstx = true;
                 xMOT.Disable_MOT();
             }
             if (y_pos >= y_ref)
             {
+                firsty = true;
                 yMOT.Disable_MOT();
             }
             if (firstx & firsty)
@@ -151,8 +157,8 @@ void task_control(void* p_params)
         else if(state ==2)
         {   
             //Read current values
-            x_pos = xENC.update()*1.571/4000;
-            y_pos = yENC.update()*1.571/4000;
+            x_pos = -xENC.update()*1.571/4000;
+            y_pos = -yENC.update()*1.571/4000;
             x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
             y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
             x_last = x_pos;
@@ -172,7 +178,9 @@ void task_control(void* p_params)
             xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
             yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
 
-            if (data_NOTavail.get())
+            flag = data_NOTavail.get();
+
+            if (flag)
             {
                 state = 3;
             }
@@ -181,6 +189,11 @@ void task_control(void* p_params)
         {
             mag.disable();
         }
+        Serial << "You are in state " << state << endl;
+        Serial << "xNOThome is " << xNOThome << endl;
+        Serial << "yNOThome is " << yNOThome << endl;
+
         vTaskDelay(20);
     }
 }
+*/

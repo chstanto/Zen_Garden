@@ -33,16 +33,17 @@ void MotorDriver::Disable_MOT(void)
 void MotorDriver::set_duty (float duty)
 {
   last_duty = duty*255/100;
-  if (duty < 0)
+  if (duty > 0)
   {
     digitalWrite(motorpin1, HIGH);
     digitalWrite(motorpin2, LOW);
-    duty *= -1;
   }
   else
   {
     digitalWrite(motorpin1, LOW);
     digitalWrite(motorpin2, HIGH); 
+    duty *= -1;
+
   };
   analogWrite(R_EN, duty*255/100);
   
