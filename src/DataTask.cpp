@@ -37,18 +37,18 @@ void task_show_data (void* p_params)
 
             while (getline(Input_Data, x, ',')) 
             {
-                x_queue.put(x);
+                xref.put(x);
 
                 getline(Input_Data, y) ;
-                y_queue.put(y);
+                yref.put(y);
             }
-            Input_Data.close;
+            Input_Data.close();
             state = 1;
         }
         // In state 1 data is being recorded until the queue is empty
         else if (state == 1)
         {
-            std::ofstream Output_Data;
+            /*std::ofstream Output_Data;
             Output_Data.open("Output_Data.csv");
             Output_Data << "X Motor,X Encoder,Y Motor,Y Encoder \n";
 
@@ -58,6 +58,9 @@ void task_show_data (void* p_params)
                 Output_Data << encoder_queue.get() << motor_queue.get() << "\n";
                 
             }
+            */
+            state = 0;
+            Output_Data.close();
         }
 
         // This task always runs once every 5 ms
