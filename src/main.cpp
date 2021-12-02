@@ -104,7 +104,7 @@ void loop()
 */
 
 //EM Testing
-
+/*
 void setup()
 {  
   Serial.begin (115200);
@@ -122,7 +122,7 @@ void loop()
 {
 
 }
-
+*/
 
 //Limit Switch Testing
 /*
@@ -153,7 +153,7 @@ void loop()
 */
 
 //Encoder Testing
-/*
+
 void setup()
 { 
   //Test
@@ -175,9 +175,9 @@ void setup()
 
   for(;;)
   {
-  delay(2500);  
-  //x_pos = enc1.getCount()*2*3.14159/4000*0.24;
-  //y_pos = enc2.getCount()*2*3.14159/4000*0.24;
+  delay(100);  
+  //x_pos = enc1.getCount()*1.571/4000;
+  //y_pos = enc2.getCount()*1.571/4000;
   //Serial <<"Motor 1 Position:" << x_pos << "inches" << endl;
   //Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;
   Serial <<"Motor 1 Position:" << enc1.getCount()*360/4000 << "degrees" << endl;
@@ -188,7 +188,7 @@ void setup()
 void loop()
 {
 }
-*/
+
 
 //Motor Testing
 /*
