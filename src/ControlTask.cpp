@@ -47,8 +47,8 @@ MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
 STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (0.00, 0.10); //0.004
-Control yCONT (0.00, 0.35); //0.5 is too high
+Control xCONT (0.00, 0.4); //0.004
+Control yCONT (0.00, 0.75); //0.5 is too high
 EMDriver mag (MagPin);
 
 void task_control(void* p_params)
