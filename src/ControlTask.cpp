@@ -47,8 +47,8 @@ MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
 STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (0, 0.203); // 1.003, 0.0203
-Control yCONT (0, 0.203); //0.0203
+Control xCONT (0.0015, 0.203*0.5); // 1.003, 0.0203
+Control yCONT (0.0015, 0.203*0.5); //0.0203
 EMDriver mag (MagPin);
 
 void task_control(void* p_params)
@@ -95,7 +95,7 @@ void task_control(void* p_params)
             yNOThome = digitalRead(limy);
             if (xNOThome)
             {
-                xMOT.set_duty(-20); 
+                xMOT.set_duty(-25); 
             }
             else
             {
@@ -104,7 +104,7 @@ void task_control(void* p_params)
             }
             if (yNOThome)
             {
-                yMOT.set_duty(-30);
+                yMOT.set_duty(-25);
             }
             else
             {
@@ -119,8 +119,8 @@ void task_control(void* p_params)
             }
             else
             {
-                xMOT.set_duty(25);
-                yMOT.set_duty(25);
+                xMOT.set_duty(14);
+                yMOT.set_duty(16);
                 x_ref = xref.get();
                 y_ref = yref.get();
                 state = 1;
@@ -146,6 +146,9 @@ void task_control(void* p_params)
             {
                 state = 2;
                 delay_val = 100;
+                Serial << "Transitioning to state 2" << endl;
+                Serial << "x position:" << x_pos << endl;
+                Serial << "y position:" << y_pos << endl << endl;
             }
             else
             {
