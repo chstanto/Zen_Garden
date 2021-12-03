@@ -19,14 +19,6 @@ uint8_t data[21] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
 
 void task_test(void* p_params)
 {
-/*
-    for(uint8_t index; index<5; index++)
-    {
-        xref.put(x_ref[index]);
-        yref.put(y_ref[index]);
-        data_NOTavail.put(data[index]);
-    }
-*/
     uint8_t index = 0;
     for(;;)
     {
