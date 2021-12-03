@@ -47,8 +47,8 @@ MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
 STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (0.0020, 0.1015);
-Control yCONT (0.0020, 0.1015); 
+Control xCONT (0.00, 0.10); //0.004
+Control yCONT (0.00, 0.35); //0.5 is too high
 EMDriver mag (MagPin);
 
 void task_control(void* p_params)
@@ -71,14 +71,14 @@ void task_control(void* p_params)
     float y_err = 0;
     float xdot_ref = 0;
     float ydot_ref = 0;
-    float speed = 0.1; //Desired operating speed, [in/s]
+    float speed = 0.01; //Desired operating speed, [in/s]
     float x_dist = 0;
     float y_dist = 0;
     float ang = 0;
 
     unsigned long last_time = 0;
     uint8_t flag;
-    uint8_t delay_val = 100;
+    uint8_t delay_val = 10;
     
     pinMode(limx, INPUT_PULLUP);
     pinMode(limy, INPUT_PULLUP);
@@ -88,6 +88,8 @@ void task_control(void* p_params)
 
     bool firstx = false;
     bool firsty = false;
+    bool x_ok = false;
+    bool y_ok = false;
     for(;;)
     {
         unsigned long Startime = micros();
@@ -122,8 +124,8 @@ void task_control(void* p_params)
             }
             else
             {
-                xMOT.set_duty(17);
-                yMOT.set_duty(17);
+                xMOT.set_duty(20);
+                yMOT.set_duty(22);
                 x_ref = xref.get();
                 y_ref = yref.get();
                 state = 1;
@@ -148,7 +150,6 @@ void task_control(void* p_params)
             if (firstx & firsty)
             {
                 state = 2;
-                delay_val = 20;
                 Serial << "Transitioning to state 2" << endl;
                 Serial << "x position:" << x_pos << endl;
                 Serial << "y position:" << y_pos << endl << endl;
@@ -172,12 +173,39 @@ void task_control(void* p_params)
             last_time = micros();
             x_err = x_ref - x_pos;
             y_err = y_ref - y_pos;
-                if( abs(x_err)<0.1 & abs(y_err)<0.1)
+                if( abs(x_err)<0.1)
+                {
+                    x_ok = true;
+                    //xMOT.Disable_MOT();
+                }
+                else
+                {
+                    //xCONT.run(x_ref, x_pos, 0, x_vel);
+                    //xMOT.set_duty(xCONT.PWM);
+                }
+                if( abs(y_err)<0.1)
+                {
+                    y_ok = true;
+                    //yMOT.Disable_MOT();
+                }
+                else
+                {
+                    //yCONT.run(y_ref, y_pos, 0, y_vel);
+                    //yMOT.set_duty(yCONT.PWM);
+                }
+                if (x_ok & y_ok)
                 {
                     x_ref = xref.get();
                     y_ref = yref.get();
                     flag = data_NOTavail.get();
+                    x_ok = false;
+                    y_ok = false;
                 }
+
+            xCONT.run(x_ref, x_pos, 0, x_vel);
+            xMOT.set_duty(xCONT.PWM);
+            yCONT.run(y_ref, y_pos, 0, y_vel);
+            yMOT.set_duty(yCONT.PWM);            
             //Determine reference velocities
             x_dist = x_ref - x_pos;
             y_dist = y_ref - y_pos;
@@ -186,12 +214,6 @@ void task_control(void* p_params)
             xdot_ref = speed*cos(ang);
             ydot_ref = speed*sin(ang);
 
-            xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
-            yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
-
-            xMOT.set_duty(xCONT.PWM);
-            yMOT.set_duty(xCONT.PWM);
-
             if (flag)
             {
                 xMOT.Disable_MOT();
@@ -199,7 +221,7 @@ void task_control(void* p_params)
                 state = 3;
             }
             Serial << "You are in state " << state << endl;
-            Serial << "Data not available?: " << flag << endl;
+            //Serial << "Data not available?: " << flag << endl;
 
             Serial << "x pos: " << x_pos << "[in]"<< endl;
             Serial << "y pos: " << y_pos << "[in]"<< endl;
@@ -210,11 +232,11 @@ void task_control(void* p_params)
             Serial << "x error: " << x_dist << "[in]"<< endl;
             Serial << "y error: " << y_dist << "[in]"<< endl << endl;
             
-            //Serial << "x vel: " << x_vel << "[in/s]"<< endl;
-            //Serial << "y vel: " << y_vel << "[in/s]"<< endl;
+            Serial << "x vel: " << x_vel << "[in/s]"<< endl;
+            Serial << "y vel: " << y_vel << "[in/s]"<< endl;
 
-            //Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
-            //Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
+            Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
+            Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
 
             //Serial << "x vel error: " << xdot_ref - x_vel << "[in/s]"<< endl;
             //Serial << "y vel error: " << ydot_ref - y_vel << "[in/s]"<< endl << endl;
