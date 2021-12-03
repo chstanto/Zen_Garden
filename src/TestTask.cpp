@@ -11,10 +11,12 @@
 #endif
 #include "shares.h" 
 
+float ind = 1.25;
 //Setup code
-float x_ref[21] = {2, 2  , 2  , 2  , 2  , 2  , 2.1, 2.2, 2.3, 2.4, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.4, 2.3, 2.2, 2.1, 2};
-float y_ref[21] = {2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.4, 2.3, 2.2, 2.1, 2  , 2  , 2  , 2  , 2  , 2};
+float x_ref[21] = {2, 2  , 2  , 2  , 2  , 2  , 2+ind, 2+2*ind, 2+3*ind, 2+4*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+4*ind, 2+3*ind, 2+2*ind, 2+ind, 2};
+float y_ref[21] = {2, 2+ind, 2+2*ind, 2+3*ind, 2+4*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+5*ind, 2+4*ind, 2+3*ind, 2+2*ind, 2+ind, 2 , 2  , 2  , 2  , 2  , 2};
 uint8_t data[21] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
+
 void task_test(void* p_params)
 {
 /*

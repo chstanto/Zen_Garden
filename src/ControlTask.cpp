@@ -47,8 +47,8 @@ MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
 STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (0.0015, 0.203*0.5); // 1.003, 0.0203
-Control yCONT (0.0015, 0.203*0.5); //0.0203
+Control xCONT (0.0020, 0.1015);
+Control yCONT (0.0020, 0.1015); 
 EMDriver mag (MagPin);
 
 void task_control(void* p_params)
@@ -67,15 +67,18 @@ void task_control(void* p_params)
     float y_last = 0;
     float x_ref = 0;
     float y_ref = 0;
+    float x_err = 0;
+    float y_err = 0;
     float xdot_ref = 0;
     float ydot_ref = 0;
     float speed = 0.1; //Desired operating speed, [in/s]
     float x_dist = 0;
     float y_dist = 0;
     float ang = 0;
+
     unsigned long last_time = 0;
     uint8_t flag;
-    int delay_val = 100;
+    uint8_t delay_val = 100;
     
     pinMode(limx, INPUT_PULLUP);
     pinMode(limy, INPUT_PULLUP);
@@ -119,8 +122,8 @@ void task_control(void* p_params)
             }
             else
             {
-                xMOT.set_duty(14);
-                yMOT.set_duty(16);
+                xMOT.set_duty(17);
+                yMOT.set_duty(17);
                 x_ref = xref.get();
                 y_ref = yref.get();
                 state = 1;
@@ -145,7 +148,7 @@ void task_control(void* p_params)
             if (firstx & firsty)
             {
                 state = 2;
-                delay_val = 100;
+                delay_val = 20;
                 Serial << "Transitioning to state 2" << endl;
                 Serial << "x position:" << x_pos << endl;
                 Serial << "y position:" << y_pos << endl << endl;
@@ -167,9 +170,14 @@ void task_control(void* p_params)
             x_last = x_pos;
             y_last = y_pos;
             last_time = micros();
-            x_ref = xref.get();
-            y_ref = yref.get();
-
+            x_err = x_ref - x_pos;
+            y_err = y_ref - y_pos;
+                if( abs(x_err)<0.1 & abs(y_err)<0.1)
+                {
+                    x_ref = xref.get();
+                    y_ref = yref.get();
+                    flag = data_NOTavail.get();
+                }
             //Determine reference velocities
             x_dist = x_ref - x_pos;
             y_dist = y_ref - y_pos;
@@ -183,9 +191,6 @@ void task_control(void* p_params)
 
             xMOT.set_duty(xCONT.PWM);
             yMOT.set_duty(xCONT.PWM);
-
-
-            flag = data_NOTavail.get();
 
             if (flag)
             {
@@ -205,14 +210,14 @@ void task_control(void* p_params)
             Serial << "x error: " << x_dist << "[in]"<< endl;
             Serial << "y error: " << y_dist << "[in]"<< endl << endl;
             
-            Serial << "x vel: " << x_vel << "[in]"<< endl;
-            Serial << "y vel: " << y_vel << "[in]"<< endl;
+            //Serial << "x vel: " << x_vel << "[in/s]"<< endl;
+            //Serial << "y vel: " << y_vel << "[in/s]"<< endl;
 
-            Serial << "x vel ref: " << xdot_ref << "[in]"<< endl;
-            Serial << "y vel ref: " << ydot_ref << "[in]"<< endl;
+            //Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
+            //Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
 
-            Serial << "x vel error: " << xdot_ref - x_vel << "[in]"<< endl;
-            Serial << "y vel error: " << ydot_ref - y_vel << "[in]"<< endl << endl;
+            //Serial << "x vel error: " << xdot_ref - x_vel << "[in/s]"<< endl;
+            //Serial << "y vel error: " << ydot_ref - y_vel << "[in/s]"<< endl << endl;
 
             Serial << "xPWM: " << xCONT.PWM << "%" << endl;
             Serial << "yPWM: " << yCONT.PWM << "%" << endl 
