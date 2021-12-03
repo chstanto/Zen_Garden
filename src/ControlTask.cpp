@@ -73,6 +73,8 @@ void task_control(void* p_params)
     float x_dist = 0;
     float y_dist = 0;
     float ang = 0;
+    float x_acc = 0;
+    float y_acc = 0;
     unsigned long last_time = 0;
     uint8_t flag;
     int delay_val = 100;
@@ -157,6 +159,7 @@ void task_control(void* p_params)
                 Serial << "y position:" << y_pos << endl << endl;
             }
         }
+        /*
         else if(state ==2)
         {   
             //Read current values
@@ -222,6 +225,99 @@ void task_control(void* p_params)
 
         }
         else if(state ==3)
+        {
+            mag.disable();
+        }
+        vTaskDelay(delay_val);
+    }
+}
+*/
+        else if(state ==2)
+        {   
+            if(xref.get())
+            {
+                x_ref = xref.get();
+                y_ref = yref.get();
+                state = 3;
+            }
+            else
+            {
+                state = 4;
+            }
+        }
+        else if(state == 3)
+        {
+            
+            //Read current values
+            x_pos = -xENC.update()*1.571/4000;
+            y_pos = -yENC.update()*1.571/4000;
+            x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
+            y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
+            x_last = x_pos;
+            y_last = y_pos;
+            last_time = micros();
+
+            x_acc = x_pos/x_ref;
+            y_acc = y_pos/y_ref;
+
+            if(0.9 < x_acc < 1.1 & 0.9 < y_acc < 1.1)
+            {
+                state = 2;
+            }
+            else
+            {
+                //Determine reference velocities
+                x_dist = x_ref - x_pos;
+                y_dist = y_ref - y_pos;
+                ang = atan2(y_dist, x_dist);
+
+                xdot_ref = speed*cos(ang);
+                ydot_ref = speed*sin(ang);
+
+                xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+                yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
+
+                xMOT.set_duty(xCONT.PWM);
+                yMOT.set_duty(xCONT.PWM);
+
+                /*
+                flag = data_NOTavail.get();
+
+                if (flag)
+                {
+                    xMOT.Disable_MOT();
+                    yMOT.Disable_MOT();
+                    state = 3;
+                }
+                */
+                Serial << "You are in state " << state << endl;
+                Serial << "Data not available?: " << flag << endl;
+
+                Serial << "x pos: " << x_pos << "[in]"<< endl;
+                Serial << "y pos: " << y_pos << "[in]"<< endl;
+
+                Serial << "x ref: " << x_ref << "[in]"<< endl;
+                Serial << "y ref: " << y_ref << "[in]"<< endl;
+
+                Serial << "x error: " << x_dist << "[in]"<< endl;
+                Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+                
+                Serial << "x vel: " << x_vel << "[in]"<< endl;
+                Serial << "y vel: " << y_vel << "[in]"<< endl;
+
+                Serial << "x vel ref: " << xdot_ref << "[in]"<< endl;
+                Serial << "y vel ref: " << ydot_ref << "[in]"<< endl;
+
+                Serial << "x vel error: " << xdot_ref - x_vel << "[in]"<< endl;
+                Serial << "y vel error: " << ydot_ref - y_vel << "[in]"<< endl << endl;
+
+                Serial << "xPWM: " << xCONT.PWM << "%" << endl;
+                Serial << "yPWM: " << yCONT.PWM << "%" << endl 
+                <<"-----------------------------------------------------------------------------------------------------" <<endl;
+            }
+
+        }
+        else if(state ==4)
         {
             mag.disable();
         }
