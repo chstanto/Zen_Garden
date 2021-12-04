@@ -11,19 +11,18 @@
 #include "EncoderDriver.h"
 #include "MotorDriver.h"
 #include "EMDriver.h"
+#include "Control.h"
 
 
 #include "ControlTask.h"
 #include "TestTask.h"
-
-
 Queue<float> xref(30, "Data");
 Queue<float> yref(30, "Data");
 Queue<uint8_t> data_NOTavail(30, "Data");
 
 
 //Pin definition
-
+/*
 //Motor Pins
 #define inputA1 PB8
 #define inputA2 PB9
@@ -51,7 +50,7 @@ bool yzero = false;
 
 //Electromagnet Pin
 #define MagPin PA10
-
+*/
 
 //Task Scheduler
 /*
@@ -325,6 +324,110 @@ void setup()
   Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;  
   mot1.Disable_MOT();
   mot2.Disable_MOT();
+}
+
+void loop()
+{
+}
+*/
+
+//Damping Testing
+/*
+void setup() 
+{ 
+  //Setup motors
+  MotorDriver yMOT (inputA1, inputA2, REALenableA);
+  MotorDriver xMOT (inputB1, inputB2, REALenableB);
+  
+  //Test
+  Serial.begin (115200);
+  delay(5000);
+  
+  Serial <<"Initialized" << endl;
+  // Setup encoders
+  STM32Encoder yENC (TIM2, E1CHA, E1CHB);
+  Serial <<"Do something!" << endl;
+  STM32Encoder xENC (TIM3, E2CHA, E2CHB);
+
+  xENC.zero();
+  yENC.zero();
+
+  // Setup control
+  Control xCONT(0.053, 0.4);
+  Control yCONT(0.053, 0.4);
+
+  float x_pos;
+  float y_pos;
+  float x_vel;
+  float y_vel;
+  float x_last;
+  float y_last;
+  float last_time;
+
+  float x_dist;
+  float x_ref = 0;
+  float y_dist;
+  float y_ref = 0;
+  float speed = 0.05;
+  float ang;
+  float xdot_ref;
+  float ydot_ref;
+
+  for(;;)
+  {
+    //Read current values
+    x_pos = -xENC.update()*1.571/4000;
+    y_pos = -yENC.update()*1.571/4000;
+    x_vel = (x_pos - x_last)/(millis()-last_time)*1000;
+    y_vel = (y_pos - y_last)/(millis()-last_time)*1000;
+    x_last = x_pos;
+    y_last = y_pos;
+    last_time = millis();
+
+    //Determine reference velocities
+    x_dist = x_ref - x_pos;
+    y_dist = y_ref - y_pos;
+    ang = atan2(y_dist, x_dist);
+
+    xdot_ref = speed*cos(ang);
+    ydot_ref = speed*sin(ang);    
+
+    if( abs(x_dist)< 0.15)
+    {
+      //xMOT.Disable_MOT();
+      //xdot_ref = speed/err*x_dist;
+      xdot_ref = 0;
+      xCONT.Kd = 0.013;
+    }
+    else
+    {
+      //xCONT.run(x_ref, x_pos, 0, x_vel);
+      //xMOT.set_duty(xCONT.PWM);
+      xCONT.Kd = 0.045;
+    }
+    if( abs(y_dist)< 0.15)
+    {
+        //yMOT.Disable_MOT();
+        //ydot_ref = speed/err*y_dist;
+        ydot_ref = 0;
+        yCONT.Kd = 0.0014;
+    }
+    else
+    {
+        //yCONT.run(y_ref, y_pos, 0, y_vel);
+        //yMOT.set_duty(yCONT.PWM);
+        yCONT.Kd = 0.045;
+
+    }
+    
+      xCONT.run(0, x_pos, xdot_ref, x_vel);
+      xMOT.set_duty(xCONT.PWM);
+      yCONT.run(0, y_pos, ydot_ref, y_vel);
+      yMOT.set_duty(yCONT.PWM);  
+    
+    delay(10);
+  }
+
 }
 
 void loop()

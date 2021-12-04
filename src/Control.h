@@ -15,5 +15,8 @@ class Control
 
     float pos_ref; //Placeholder reference position, should be tak
     float vel_ref;
+
+    float PWM_vel;
+    float PWM_pos;
     float PWM;
 };

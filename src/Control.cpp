@@ -14,8 +14,10 @@ Control::Control(float vel_gain, float pos_gain)
 
 void Control::run(float pos_ref, float pos, float vel_ref, float vel)
 {
+    PWM_vel =  100*Kd*(vel_ref - vel);
+    PWM_pos =  100*Kp*(pos_ref-pos);
 
-    PWM =  100*(Kp*(pos_ref-pos) + Kd*(vel_ref - vel));
+    PWM =  PWM_vel + PWM_pos;
     if (PWM >= 0)
     {
         PWM = PWM*87/100 + 13;

@@ -42,13 +42,14 @@
 #define limx PB0
 #define limy PA4
 
+
 //Driver setups
 MotorDriver yMOT (inputA1, inputA2, enableA);
 MotorDriver xMOT (inputB1, inputB2, enableB);
 STM32Encoder yENC (TIM2, E1CHA, E1CHB);
 STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-Control xCONT (0.00, 0.4); //0.004
-Control yCONT (0.00, 0.75); //0.5 is too high
+Control xCONT (0.012, 0.4); //0.004
+Control yCONT (0.012, 0.5); //0.5 is too high
 EMDriver mag (MagPin);
 
 void task_control(void* p_params)
@@ -67,14 +68,13 @@ void task_control(void* p_params)
     float y_last = 0;
     float x_ref = 0;
     float y_ref = 0;
-    float x_err = 0;
-    float y_err = 0;
     float xdot_ref = 0;
     float ydot_ref = 0;
-    float speed = 0.01; //Desired operating speed, [in/s]
+    float speed = 1; //Desired operating speed, [in/s]
     float x_dist = 0;
     float y_dist = 0;
     float ang = 0;
+    float err = 0.3;
 
     unsigned long last_time = 0;
     uint8_t flag;
@@ -92,7 +92,7 @@ void task_control(void* p_params)
     bool y_ok = false;
     for(;;)
     {
-        unsigned long Startime = micros();
+        unsigned long Startime = millis();
         mag.enable();
         if(state ==0) //INIT State, find home setup everything
         {
@@ -166,46 +166,12 @@ void task_control(void* p_params)
             //Read current values
             x_pos = -xENC.update()*1.571/4000;
             y_pos = -yENC.update()*1.571/4000;
-            x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
-            y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
+            x_vel = (x_pos - x_last)/(millis()-last_time)*1000;
+            y_vel = (y_pos - y_last)/(millis()-last_time)*1000;
             x_last = x_pos;
             y_last = y_pos;
-            last_time = micros();
-            x_err = x_ref - x_pos;
-            y_err = y_ref - y_pos;
-                if( abs(x_err)<0.1)
-                {
-                    x_ok = true;
-                    //xMOT.Disable_MOT();
-                }
-                else
-                {
-                    //xCONT.run(x_ref, x_pos, 0, x_vel);
-                    //xMOT.set_duty(xCONT.PWM);
-                }
-                if( abs(y_err)<0.1)
-                {
-                    y_ok = true;
-                    //yMOT.Disable_MOT();
-                }
-                else
-                {
-                    //yCONT.run(y_ref, y_pos, 0, y_vel);
-                    //yMOT.set_duty(yCONT.PWM);
-                }
-                if (x_ok & y_ok)
-                {
-                    x_ref = xref.get();
-                    y_ref = yref.get();
-                    flag = data_NOTavail.get();
-                    x_ok = false;
-                    y_ok = false;
-                }
+            last_time = millis();
 
-            xCONT.run(x_ref, x_pos, 0, x_vel);
-            xMOT.set_duty(xCONT.PWM);
-            yCONT.run(y_ref, y_pos, 0, y_vel);
-            yMOT.set_duty(yCONT.PWM);            
             //Determine reference velocities
             x_dist = x_ref - x_pos;
             y_dist = y_ref - y_pos;
@@ -213,6 +179,62 @@ void task_control(void* p_params)
 
             xdot_ref = speed*cos(ang);
             ydot_ref = speed*sin(ang);
+            
+            if( abs(x_dist)< err)
+            {
+                x_ok = true;
+            }
+            else
+            {
+            }
+            if( abs(y_dist)< err)
+            {
+                y_ok = true;
+            }
+            else
+            {
+            }
+
+            if( abs(x_dist)< err)
+            {
+                xMOT.Disable_MOT();
+                xdot_ref = 0;
+                xCONT.Kd = 0.00625;
+            }
+            else
+            {
+                xCONT.Kd = 0.012;
+            }
+            if( abs(y_dist)< err)
+            {
+                ydot_ref = 0;
+                yCONT.Kd = 0.00625;
+            }
+            else
+            {
+                yCONT.Kd = 0.012; 
+            }
+            
+            if (x_ok & y_ok)
+            {
+                x_ref = xref.get();
+                y_ref = yref.get();
+                flag = data_NOTavail.get();
+                x_ok = false;
+                y_ok = false;
+                //Determine reference velocities
+                x_dist = x_ref - x_pos;
+                y_dist = y_ref - y_pos;
+                ang = atan2(y_dist, x_dist);
+                xdot_ref = speed*cos(ang);
+                ydot_ref = speed*sin(ang);
+            }
+            
+            xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+            xMOT.set_duty(xCONT.PWM);
+            yCONT.run(y_ref, y_pos, ydot_ref, y_vel);
+            yMOT.set_duty(yCONT.PWM);   
+            
 
             if (flag)
             {
@@ -223,27 +245,35 @@ void task_control(void* p_params)
             Serial << "You are in state " << state << endl;
             //Serial << "Data not available?: " << flag << endl;
 
-            Serial << "x pos: " << x_pos << "[in]"<< endl;
-            Serial << "y pos: " << y_pos << "[in]"<< endl;
+            //Serial << "x pos: " << x_pos << "[in]"<< endl;
+            //Serial << "y pos: " << y_pos << "[in]"<< endl;
 
-            Serial << "x ref: " << x_ref << "[in]"<< endl;
-            Serial << "y ref: " << y_ref << "[in]"<< endl;
+            //Serial << "x ref: " << x_ref << "[in]"<< endl;
+            //Serial << "y ref: " << y_ref << "[in]"<< endl;
 
-            Serial << "x error: " << x_dist << "[in]"<< endl;
-            Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+            //Serial << "x error: " << x_dist << "[in]"<< endl;
+            //Serial << "y error: " << y_dist << "[in]"<< endl << endl;
             
-            Serial << "x vel: " << x_vel << "[in/s]"<< endl;
-            Serial << "y vel: " << y_vel << "[in/s]"<< endl;
+            //Serial << "x vel: " << x_vel << "[in/s]"<< endl;
+            //Serial << "y vel: " << y_vel << "[in/s]"<< endl;
 
-            Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
-            Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
+            //Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
+            //Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
 
             //Serial << "x vel error: " << xdot_ref - x_vel << "[in/s]"<< endl;
             //Serial << "y vel error: " << ydot_ref - y_vel << "[in/s]"<< endl << endl;
 
+            Serial << "xPWM_pos: " << xCONT.PWM_pos << "%" << endl;
+            Serial << "yPWM_pos: " << yCONT.PWM_pos << "%" << endl;            
+            
+            Serial << "xPWM_vel: " << xCONT.PWM_vel << "%" << endl;
+            Serial << "yPWM_vel: " << yCONT.PWM_vel << "%" << endl;            
+
             Serial << "xPWM: " << xCONT.PWM << "%" << endl;
-            Serial << "yPWM: " << yCONT.PWM << "%" << endl 
-            <<"-----------------------------------------------------------------------------------------------------" <<endl;
+            Serial << "yPWM: " << yCONT.PWM << "%" << endl;
+
+
+            Serial <<"-----------------------------------------------------------------------------------------------------" <<endl;
 
            
 
