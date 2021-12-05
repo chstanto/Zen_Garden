@@ -1,14 +1,13 @@
-/** @file DataTask.h
- *    
- * 
- *  @author Cole Stanton
- *  @date   2021-Nov-30 Original file
+/** @file DataTask.cpp
+ *  This file contains a task for sending and receiving data to the Control Task
+ *  @author  Aaron Tran
+ *  @author  Cole Stanton
+ *  @date    2021-Dec-1 Original file
  */
 
+#ifndef _DATATASK_H
+#define _DATATASK_H
 
-#ifndef _TASK_DATA_H_
-#define _TASK_DATA_H_
+void task_data(void* p_params);
 
-void task_data (void* p_params);
-
-#endif // _TASK_DATA_H_
+#endif // _DATATASK_H

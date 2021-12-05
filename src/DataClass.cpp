@@ -1,6 +1,5 @@
 /** @file DataTask.cpp
- *    
- * 
+ *  @author Aaron Tran
  *  @author Cole Stanton
  *  @date   2021-Nov-30 Original file
  */

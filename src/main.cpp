@@ -1,3 +1,10 @@
+/** @file main.cpp
+ *  This file contains a program for running the Mechatronic Zen Garden.
+ *  @author  Aaron Tran
+ *  @author  Cole Stanton
+ *  @date    28-Oct-2020 Original file
+ */
+
 #include <Arduino.h>
 #include <PrintStream.h>
 #if (defined STM32L4xx || defined STM32F4xx)
@@ -8,20 +15,22 @@
 #include "taskqueue.h"         // Header for inter-task data queues
 #include "shares.h"            // Header for shares used in this project
 
-#include "EncoderDriver.h"
-#include "MotorDriver.h"
-#include "EMDriver.h"
-#include "Control.h"
+#include "EncoderDriver.h"     // Header for encoder driver
+#include "MotorDriver.h"       // Header for motor driver
+#include "EMDriver.h"          // Header for electromagnet driver
+#include "Control.h"           // Header for control system calculator
 
 
 #include "ControlTask.h"
-#include "TestTask.h"
-Queue<float> xref(30, "Data");
-Queue<float> yref(30, "Data");
-Queue<uint8_t> data_NOTavail(30, "Data");
+#include "DataTask.h"
+
+//Queue declarations
+Queue<float> xref(30, "X Data");          //Zen Garden x position data
+Queue<float> yref(30, "Y Data");          //Zen Garden y position data
+Queue<uint8_t> data_NOTavail(30, "Data"); //Array of mostly zeros with just a one at the end to signify all data has been sent
 
 
-//Pin definition
+//Pin definition for testing
 /*
 //Motor Pins
 #define inputA1 PB8
@@ -53,48 +62,24 @@ bool yzero = false;
 */
 
 //Task Scheduler
-/*
 void setup () 
 {
     // Start the serial port, wait a short time, then say hello. Use the
     // non-RTOS delay() function because the RTOS hasn't been started yet
     Serial.begin (115200);
     delay (2000);
-    Serial << endl << endl << "Hello, I am an RTOS demonstration" << endl;
+    Serial << endl << endl << "Initializing Mechatronic Zen Garden" << endl;
 
-    // Create a task which prints a slightly disagreeable message
-    xTaskCreate (task_MOTx,
-                 "x_motor",                         // Task name for printouts
-                 2048,                            // Stack size
-                 NULL,                            // Parameters for task fn.
-                 4,                               // Priority
-                 NULL);                           // Task handle
-
-    // Create a task which prints a more agreeable message
-    xTaskCreate (task_MOTy,
-                 "y_motor",
-                 2048,                            // Stack size
-                 NULL,
-                 4,                               // High priority
-                 NULL);
-
-    // Create a task which prints a more agreeable message
-    xTaskCreate (task_EM,
-                 "EM",
-                 2048,                            // Stack size
-                 NULL,
-                 5,                               // Priority
-                 NULL);
-
-    // Create a task which prints a more agreeable message
+    // Create a task which sends design data
+    // This task would also collect data and write it to a CSV file upon further development 
     xTaskCreate (task_data,
                  "data",
                  4096,                            // Stack size
                  NULL,
-                 1,                               // Priority
+                 2,                               // Priority
                  NULL);
 
-    // Create a task which prints a more agreeable message
+    // Create a task that implements the different machine states and control system.
     xTaskCreate (task_control,
                  "control",
                  2048,                            // Stack size
@@ -113,9 +98,10 @@ void loop()
 {
 
 }
-*/
+
 
 //Control Task Testing
+/*
 void setup()
 {
 
@@ -126,7 +112,7 @@ void setup()
                NULL,
                1,                               // Priority
                NULL);
-  xTaskCreate (task_test,
+  xTaskCreate (task_data,
                "send data",
                2048,                            // Stack size
                NULL,
@@ -140,7 +126,7 @@ void loop()
 {
 
 }
-
+*/
 
 //EM Testing
 /*
