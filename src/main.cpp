@@ -1,3 +1,10 @@
+/** @file main.cpp
+ *  This file contains a program for running the Mechatronic Zen Garden.
+ *  @author  Aaron Tran
+ *  @author  Cole Stanton
+ *  @date    28-Oct-2020 Original file
+ */
+
 #include <Arduino.h>
 #include <PrintStream.h>
 #if (defined STM32L4xx || defined STM32F4xx)
@@ -8,22 +15,23 @@
 #include "taskqueue.h"         // Header for inter-task data queues
 #include "shares.h"            // Header for shares used in this project
 
-#include "EncoderDriver.h"
-#include "MotorDriver.h"
-#include "EMDriver.h"
+#include "EncoderDriver.h"     // Header for encoder driver
+#include "MotorDriver.h"       // Header for motor driver
+#include "EMDriver.h"          // Header for electromagnet driver
+#include "Control.h"           // Header for control system calculator
 
 
 #include "ControlTask.h"
-#include "TestTask.h"
+#include "DataTask.h"
+
+//Queue declarations
+Queue<float> xref(30, "X Data");          //Zen Garden x position data
+Queue<float> yref(30, "Y Data");          //Zen Garden y position data
+Queue<uint8_t> data_NOTavail(30, "Data"); //Array of mostly zeros with just a one at the end to signify all data has been sent
 
 
-Queue<float> xref(30, "Data");
-Queue<float> yref(30, "Data");
-Queue<uint8_t> data_NOTavail(30, "Data");
-
-
-//Pin definition
-
+//Pin definition for testing
+/*
 //Motor Pins
 #define inputA1 PB8
 #define inputA2 PB9
@@ -51,51 +59,27 @@ bool yzero = false;
 
 //Electromagnet Pin
 #define MagPin PA10
-
+*/
 
 //Task Scheduler
-/*
 void setup () 
 {
     // Start the serial port, wait a short time, then say hello. Use the
     // non-RTOS delay() function because the RTOS hasn't been started yet
     Serial.begin (115200);
     delay (2000);
-    Serial << endl << endl << "Hello, I am an RTOS demonstration" << endl;
+    Serial << endl << endl << "Initializing Mechatronic Zen Garden" << endl;
 
-    // Create a task which prints a slightly disagreeable message
-    xTaskCreate (task_MOTx,
-                 "x_motor",                         // Task name for printouts
-                 2048,                            // Stack size
-                 NULL,                            // Parameters for task fn.
-                 4,                               // Priority
-                 NULL);                           // Task handle
-
-    // Create a task which prints a more agreeable message
-    xTaskCreate (task_MOTy,
-                 "y_motor",
-                 2048,                            // Stack size
-                 NULL,
-                 4,                               // High priority
-                 NULL);
-
-    // Create a task which prints a more agreeable message
-    xTaskCreate (task_EM,
-                 "EM",
-                 2048,                            // Stack size
-                 NULL,
-                 5,                               // Priority
-                 NULL);
-
-    // Create a task which prints a more agreeable message
+    // Create a task which sends design data
+    // This task would also collect data and write it to a CSV file upon further development 
     xTaskCreate (task_data,
                  "data",
                  4096,                            // Stack size
                  NULL,
-                 1,                               // Priority
+                 2,                               // Priority
                  NULL);
 
-    // Create a task which prints a more agreeable message
+    // Create a task that implements the different machine states and control system.
     xTaskCreate (task_control,
                  "control",
                  2048,                            // Stack size
@@ -114,9 +98,10 @@ void loop()
 {
 
 }
-*/
+
 
 //Control Task Testing
+/*
 void setup()
 {
 
@@ -127,7 +112,7 @@ void setup()
                NULL,
                1,                               // Priority
                NULL);
-  xTaskCreate (task_test,
+  xTaskCreate (task_data,
                "send data",
                2048,                            // Stack size
                NULL,
@@ -141,7 +126,7 @@ void loop()
 {
 
 }
-
+*/
 
 //EM Testing
 /*
@@ -325,6 +310,110 @@ void setup()
   Serial <<"Motor 2 Position:" << y_pos << "inches" << endl;  
   mot1.Disable_MOT();
   mot2.Disable_MOT();
+}
+
+void loop()
+{
+}
+*/
+
+//Damping Testing
+/*
+void setup() 
+{ 
+  //Setup motors
+  MotorDriver yMOT (inputA1, inputA2, REALenableA);
+  MotorDriver xMOT (inputB1, inputB2, REALenableB);
+  
+  //Test
+  Serial.begin (115200);
+  delay(5000);
+  
+  Serial <<"Initialized" << endl;
+  // Setup encoders
+  STM32Encoder yENC (TIM2, E1CHA, E1CHB);
+  Serial <<"Do something!" << endl;
+  STM32Encoder xENC (TIM3, E2CHA, E2CHB);
+
+  xENC.zero();
+  yENC.zero();
+
+  // Setup control
+  Control xCONT(0.053, 0.4);
+  Control yCONT(0.053, 0.4);
+
+  float x_pos;
+  float y_pos;
+  float x_vel;
+  float y_vel;
+  float x_last;
+  float y_last;
+  float last_time;
+
+  float x_dist;
+  float x_ref = 0;
+  float y_dist;
+  float y_ref = 0;
+  float speed = 0.05;
+  float ang;
+  float xdot_ref;
+  float ydot_ref;
+
+  for(;;)
+  {
+    //Read current values
+    x_pos = -xENC.update()*1.571/4000;
+    y_pos = -yENC.update()*1.571/4000;
+    x_vel = (x_pos - x_last)/(millis()-last_time)*1000;
+    y_vel = (y_pos - y_last)/(millis()-last_time)*1000;
+    x_last = x_pos;
+    y_last = y_pos;
+    last_time = millis();
+
+    //Determine reference velocities
+    x_dist = x_ref - x_pos;
+    y_dist = y_ref - y_pos;
+    ang = atan2(y_dist, x_dist);
+
+    xdot_ref = speed*cos(ang);
+    ydot_ref = speed*sin(ang);    
+
+    if( abs(x_dist)< 0.15)
+    {
+      //xMOT.Disable_MOT();
+      //xdot_ref = speed/err*x_dist;
+      xdot_ref = 0;
+      xCONT.Kd = 0.013;
+    }
+    else
+    {
+      //xCONT.run(x_ref, x_pos, 0, x_vel);
+      //xMOT.set_duty(xCONT.PWM);
+      xCONT.Kd = 0.045;
+    }
+    if( abs(y_dist)< 0.15)
+    {
+        //yMOT.Disable_MOT();
+        //ydot_ref = speed/err*y_dist;
+        ydot_ref = 0;
+        yCONT.Kd = 0.0014;
+    }
+    else
+    {
+        //yCONT.run(y_ref, y_pos, 0, y_vel);
+        //yMOT.set_duty(yCONT.PWM);
+        yCONT.Kd = 0.045;
+
+    }
+    
+      xCONT.run(0, x_pos, xdot_ref, x_vel);
+      xMOT.set_duty(xCONT.PWM);
+      yCONT.run(0, y_pos, ydot_ref, y_vel);
+      yMOT.set_duty(yCONT.PWM);  
+    
+    delay(10);
+  }
+
 }
 
 void loop()
