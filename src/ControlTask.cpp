@@ -1,7 +1,6 @@
 /** @file ControlTask.cpp
  *  This file contains a task for controlling the Zen Gardener's magnet position
  *  @author  Aaron Tran
- *  @author  Cole Stanton
  *  @date    2021-Nov-29 Original file
  */
 
@@ -43,13 +42,15 @@
 #define limx PB0
 #define limy PA4
 
+//Driver setups
+MotorDriver yMOT (inputA1, inputA2, enableA);
+MotorDriver xMOT (inputB1, inputB2, enableB);
+STM32Encoder yENC (TIM2, E1CHA, E1CHB);
+STM32Encoder xENC (TIM3, E2CHA, E2CHB);
+Control xCONT (0.0015, 0.203*0.5); // 1.003, 0.0203
+Control yCONT (0.0015, 0.203*0.5); //0.0203
+EMDriver mag (MagPin);
 
-
-
-/** @brief   Task which sends data to ControlTask.h
- *  @details This task sends designs Zen Garden designs to the Control Task. Upon further development, this task would also read from a CSV to obtain that data, retrieve performance data, and print desired data to a CSV.
- *  @param   p_params A pointer to function parameters which we don't use.
- */
 void task_control(void* p_params)
 {
     Serial.begin (115200);
@@ -58,26 +59,27 @@ void task_control(void* p_params)
     (void)p_params;                             // Shuts up a compiler warning
     uint8_t state = 0;
     //Position and velocity declarations
-    float x_pos = 0;        //Current x position, [in]                   
-    float y_pos = 0;        //Current y position, [in]
-    float x_vel = 0;        //Current x velocity, [in/s]
-    float y_vel = 0;        //Current y velocity, [in/s]
-    float x_last = 0;       //Previous x position reading, [in]
-    float y_last = 0;       //Previous y position reading, [in]
-    float x_ref = 0;        //Reference x position, [in]
-    float y_ref = 0;        //Reference y position, [in]
-    float xdot_ref = 0;     //Reference x velocity, [in/s]
-    float ydot_ref = 0;     //Reference y velocity, [in/s]
-    float speed = 1;        //Desired operating speed, [in/s]
-    float x_dist = 0;       //x error, [in]
-    float y_dist = 0;       //y error, [in]
-    float ang = 0;          //Angle of reference velocity vector [rad]
-    float err = 0.3;        //Control system's acceptable error [in]
-    unsigned long last_time = 0;    //Clock value [ms]
-    uint8_t delay_val = 10; //vTaskDelay value [ms]
+    float x_pos = 0;
+    float y_pos = 0;
+    float x_vel = 0;
+    float y_vel = 0;
+    float x_last = 0;
+    float y_last = 0;
+    float x_ref = 0;
+    float y_ref = 0;
+    float xdot_ref = 0;
+    float ydot_ref = 0;
+    float speed = 0.1; //Desired operating speed, [in/s]
+    float x_dist = 0;
+    float y_dist = 0;
+    float ang = 0;
+    float x_acc = 0;
+    float y_acc = 0;
+    unsigned long last_time = 0;
+    uint8_t flag;
+    int delay_val = 100;
     
-    //Configure limit switch pins as input pullups
-    pinMode(limx, INPUT_PULLUP); 
+    pinMode(limx, INPUT_PULLUP);
     pinMode(limy, INPUT_PULLUP);
 
     //Flag values
@@ -106,7 +108,6 @@ void task_control(void* p_params)
             mag.enable();
             xNOThome = digitalRead(limx);
             yNOThome = digitalRead(limy);
-            //Turn on x motor until it reaches zero position
             if (xNOThome)
             {
                 xMOT.set_duty(-25); 
@@ -116,7 +117,6 @@ void task_control(void* p_params)
                 xENC.zero();
                 xMOT.Disable_MOT();
             }
-            //Turn on y motor until it reaches zero position
             if (yNOThome)
             {
                 yMOT.set_duty(-25);
@@ -126,7 +126,6 @@ void task_control(void* p_params)
                 yENC.zero();
                 yMOT.Disable_MOT();
             }
-            //Once both motors have reached the home position, transition to state 1
             if (xNOThome | yNOThome)
             {
                 Serial << "You are in state " << state << endl;
@@ -135,36 +134,34 @@ void task_control(void* p_params)
             }
             else
             {
-                xMOT.set_duty(20);
-                yMOT.set_duty(22);
+                xMOT.set_duty(14);
+                yMOT.set_duty(16);
                 x_ref = xref.get();
                 y_ref = yref.get();
                 flag = data_NOTavail.get();
                 state = 1;
             }
         }
-        else if(state ==1) //Preparation State, move motor to first position
+        else if(state ==1)
         {
-            //Read encoder values
+            //Prep to first position
             x_pos = -xENC.update()*1.571/4000;
             y_pos = -yENC.update()*1.571/4000;           
-            
-            //Trigger flags and turns off motor upon reaching first x position
             if (x_pos >= x_ref)
             {
                 firstx = true;
                 xMOT.Disable_MOT();
             }
-            //Trigger flags and turns off motor upon reaching first y position
             if (y_pos >= y_ref)
             {
                 firsty = true;
                 yMOT.Disable_MOT();
             }
-            //If both flags are triggered, transition to state 2
+
             if (firstx & firsty)
             {
                 state = 2;
+                delay_val = 100;
                 Serial << "Transitioning to state 2" << endl;
                 Serial << "x position:" << x_pos << endl;
                 Serial << "y position:" << y_pos << endl << endl;
@@ -176,61 +173,163 @@ void task_control(void* p_params)
                 Serial << "y position:" << y_pos << endl << endl;
             }
         }
-        else if(state ==2) //Drawing state
+        /*
+        else if(state ==2)
         {   
             //Read current values
             x_pos = -xENC.update()*1.571/4000;
             y_pos = -yENC.update()*1.571/4000;
-            x_vel = (x_pos - x_last)/(millis()-last_time)*1000;
-            y_vel = (y_pos - y_last)/(millis()-last_time)*1000;
+            x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
+            y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
             x_last = x_pos;
             y_last = y_pos;
-            last_time = millis();
+            last_time = micros();
+            x_ref = xref.get();
+            y_ref = yref.get();
 
-            //Determine reference velocities based off of positional error and desired speed
+            //Determine reference velocities
             x_dist = x_ref - x_pos;
             y_dist = y_ref - y_pos;
             ang = atan2(y_dist, x_dist);
 
             xdot_ref = speed*cos(ang);
             ydot_ref = speed*sin(ang);
-            
-            //Trigger flags when acceptable error is met and enter damping phase, where reference velocities are set to zero and velocity gain is reduced to damp out oscillations
-            if( abs(x_dist)< err)
+
+            xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+            yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
+
+            xMOT.set_duty(xCONT.PWM);
+            yMOT.set_duty(xCONT.PWM);
+
+
+            flag = data_NOTavail.get();
+
+            if (flag)
             {
-                x_ok = true;
-                xdot_ref = 0;
-                xCONT.Kd = 0.00625;
+                xMOT.Disable_MOT();
+                yMOT.Disable_MOT();
+                state = 3;
+            }
+            Serial << "You are in state " << state << endl;
+            Serial << "Data not available?: " << flag << endl;
+
+            Serial << "x pos: " << x_pos << "[in]"<< endl;
+            Serial << "y pos: " << y_pos << "[in]"<< endl;
+
+            Serial << "x ref: " << x_ref << "[in]"<< endl;
+            Serial << "y ref: " << y_ref << "[in]"<< endl;
+
+            Serial << "x error: " << x_dist << "[in]"<< endl;
+            Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+            
+            Serial << "x vel: " << x_vel << "[in]"<< endl;
+            Serial << "y vel: " << y_vel << "[in]"<< endl;
+
+            Serial << "x vel ref: " << xdot_ref << "[in]"<< endl;
+            Serial << "y vel ref: " << ydot_ref << "[in]"<< endl;
+
+            Serial << "x vel error: " << xdot_ref - x_vel << "[in]"<< endl;
+            Serial << "y vel error: " << ydot_ref - y_vel << "[in]"<< endl << endl;
+
+            Serial << "xPWM: " << xCONT.PWM << "%" << endl;
+            Serial << "yPWM: " << yCONT.PWM << "%" << endl 
+            <<"-----------------------------------------------------------------------------------------------------" <<endl;
+
+           
+
+        }
+        else if(state ==3)
+        {
+            mag.disable();
+        }
+        vTaskDelay(delay_val);
+    }
+}
+*/
+        else if(state ==2)
+        {   
+            if(xref.get())
+            {
+                x_ref = xref.get();
+                y_ref = yref.get();
+                state = 3;
             }
             else
             {
-                xCONT.Kd = 0.012;
+                state = 4;
             }
-            if( abs(y_dist)< err)
+        }
+        else if(state == 3)
+        {
+            
+            //Read current values
+            x_pos = -xENC.update()*1.571/4000;
+            y_pos = -yENC.update()*1.571/4000;
+            x_vel = (x_pos - x_last)/(micros()-last_time)*1000000;
+            y_vel = (y_pos - y_last)/(micros()-last_time)*1000000;
+            x_last = x_pos;
+            y_last = y_pos;
+            last_time = micros();
+
+            x_acc = x_pos/x_ref;
+            y_acc = y_pos/y_ref;
+
+            if(0.9 < x_acc < 1.1 & 0.9 < y_acc < 1.1)
             {
-                y_ok = true;
-                ydot_ref = 0;
-                yCONT.Kd = 0.00625;
-            }
-            else    
-            {
-                yCONT.Kd = 0.012; 
+                state = 2;
             }
             
 
             if (x_ok & y_ok & !flag)
             {
-                x_ref = xref.get();
-                y_ref = yref.get();
-                flag = data_NOTavail.get();
-                x_ok = false;
-                y_ok = false;
                 //Determine reference velocities
                 x_dist = x_ref - x_pos;
                 y_dist = y_ref - y_pos;
                 ang = atan2(y_dist, x_dist);
+
                 xdot_ref = speed*cos(ang);
                 ydot_ref = speed*sin(ang);
+
+                xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+                yCONT.run(y_ref, x_pos, ydot_ref, x_vel);
+
+                xMOT.set_duty(xCONT.PWM);
+                yMOT.set_duty(xCONT.PWM);
+
+                /*
+                flag = data_NOTavail.get();
+
+                if (flag)
+                {
+                    xMOT.Disable_MOT();
+                    yMOT.Disable_MOT();
+                    state = 3;
+                }
+                */
+                Serial << "You are in state " << state << endl;
+                Serial << "Data not available?: " << flag << endl;
+
+                Serial << "x pos: " << x_pos << "[in]"<< endl;
+                Serial << "y pos: " << y_pos << "[in]"<< endl;
+
+                Serial << "x ref: " << x_ref << "[in]"<< endl;
+                Serial << "y ref: " << y_ref << "[in]"<< endl;
+
+                Serial << "x error: " << x_dist << "[in]"<< endl;
+                Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+                
+                Serial << "x vel: " << x_vel << "[in]"<< endl;
+                Serial << "y vel: " << y_vel << "[in]"<< endl;
+
+                Serial << "x vel ref: " << xdot_ref << "[in]"<< endl;
+                Serial << "y vel ref: " << ydot_ref << "[in]"<< endl;
+
+                Serial << "x vel error: " << xdot_ref - x_vel << "[in]"<< endl;
+                Serial << "y vel error: " << ydot_ref - y_vel << "[in]"<< endl << endl;
+
+                Serial << "xPWM: " << xCONT.PWM << "%" << endl;
+                Serial << "yPWM: " << yCONT.PWM << "%" << endl 
+                <<"-----------------------------------------------------------------------------------------------------" <<endl;
             }
             
             //Check if last data point has been retrieved and move to state 3 if it has
@@ -271,7 +370,7 @@ void task_control(void* p_params)
             // Serial << "yPWM: " << yCONT.PWM << "%" << endl;
             // Serial <<"-----------------------------------------------------------------------------------------------------" <<endl;
         }
-        else if(state ==3) //Idle
+        else if(state ==4)
         {
             Serial << "State 3" << endl;
         }
