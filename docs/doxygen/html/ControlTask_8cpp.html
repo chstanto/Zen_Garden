@@ -104,11 +104,11 @@ $(document).ready(function(){initNavTree('ControlTask_8cpp.html',''); initResiza
 <div class="textblock"><code>#include &lt;Arduino.h&gt;</code><br />
 <code>#include &lt;PrintStream.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="shares_8h_source.html">shares.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ControlTask_8h_source.html">ControlTask.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Control_8h_source.html">Control.h</a>&quot;</code><br />
+<code>#include &quot;ControlTask.h&quot;</code><br />
+<code>#include &quot;Control.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="EncoderDriver_8h_source.html">EncoderDriver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="MotorDriver_8h_source.html">MotorDriver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="EMDriver_8h_source.html">EMDriver.h</a>&quot;</code><br />
+<code>#include &quot;MotorDriver.h&quot;</code><br />
+<code>#include &quot;EMDriver.h&quot;</code><br />
 <code>#include &quot;math.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -156,11 +156,17 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a1c626f59becb67075cd4a0c92eb6c4b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ControlTask_8cpp.html#a1c626f59becb67075cd4a0c92eb6c4b1">task_control</a> (void *p_params)</td></tr>
-<tr class="memdesc:a1c626f59becb67075cd4a0c92eb6c4b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Task which sends data to <a class="el" href="ControlTask_8h.html">ControlTask.h</a>.  <a href="ControlTask_8cpp.html#a1c626f59becb67075cd4a0c92eb6c4b1">More...</a><br /></td></tr>
+<tr class="memdesc:a1c626f59becb67075cd4a0c92eb6c4b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Task which sends data to <a class="el" href="ControlTask_8h_source.html">ControlTask.h</a>.  <a href="ControlTask_8cpp.html#a1c626f59becb67075cd4a0c92eb6c4b1">More...</a><br /></td></tr>
 <tr class="separator:a1c626f59becb67075cd4a0c92eb6c4b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This file contains a task for controlling the Zen Gardener's magnet position </p><dl class="section author"><dt>Author</dt><dd>Aaron Tran </dd>
+<div class="textblock"><p>This file contains a task for controlling the Zen Gardener's magnet position</p>
+<p>Source code available here: <a href="https://github.com/chstanto/Zen_Garden/blob/main/src/ControlTask.cpp">https://github.com/chstanto/Zen_Garden/blob/main/src/ControlTask.cpp</a> </p><dl class="section author"><dt>Author</dt><dd>Aaron Tran </dd>
+<dd>
+Cole Stanton </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2021-Nov-29 Original file</dd></dl>
+<p>This file contains a task for controlling the Zen Gardener's magnet position</p>
+<p>Source code available here: <a href="https://github.com/chstanto/Zen_Garden/blob/main/src/ControlTask.h">https://github.com/chstanto/Zen_Garden/blob/main/src/ControlTask.h</a> </p><dl class="section author"><dt>Author</dt><dd>Aaron Tran </dd>
 <dd>
 Cole Stanton </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2021-Nov-29 Original file </dd></dl>
@@ -181,13 +187,48 @@ Cole Stanton </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Task which sends data to <a class="el" href="ControlTask_8h.html">ControlTask.h</a>. </p>
+<p>Task which sends data to <a class="el" href="ControlTask_8h_source.html">ControlTask.h</a>. </p>
 <p>This task sends designs Zen Garden designs to the <a class="el" href="classControl.html" title="Class for implementing Mechatronic Zen Garden control system.">Control</a> Task. Upon further development, this task would also read from a CSV to obtain that data, retrieve performance data, and print desired data to a CSV. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p_params</td><td>A pointer to function parameters which we don't use. </td></tr>
   </table>
   </dd>
 </dl>
+<p>Current x position, [in] <br  />
+</p>
+<p>Current y position, [in] <br  />
+</p>
+<p>Current x velocity, [in/s]</p>
+<p>Current y velocity, [in/s]</p>
+<p>Previous x position reading, [in] <br  />
+</p>
+<p>Previous y position reading, [in] <br  />
+</p>
+<p>Reference x position, [in] <br  />
+</p>
+<p>Reference y position, [in]</p>
+<p>Reference x velocity, [in/s] <br  />
+</p>
+<p>Reference y velocity, [in/s]</p>
+<p>Desired operating speed, [in/s]</p>
+<p>x error, [in] <br  />
+</p>
+<p>y error, [in]</p>
+<p>Angle of reference velocity vector [rad]</p>
+<p><a class="el" href="classControl.html" title="Class for implementing Mechatronic Zen Garden control system.">Control</a> system's acceptable error [in] <br  />
+</p>
+<p>Clock value [ms]</p>
+<p>vTaskDelay value [ms] <br  />
+</p>
+<p>triggers flag if x limit switch has been clicked</p>
+<p>triggers flag if y limit switch has been clicked <br  />
+</p>
+<p>triggers flag if first x position has been reached <br  />
+</p>
+<p>triggers flag if first y position has been reached</p>
+<p>triggers flag if x position error is sufficiently low</p>
+<p>triggers flag if y position error is sufficiently low</p>
+<p>triggers flag if last reference value has been received</p>
 
 </div>
 </div>
@@ -197,7 +238,7 @@ Cole Stanton </dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="ControlTask_8cpp.html">ControlTask.cpp</a></li>
-    <li class="footer">Generated on Mon Dec 6 2021 17:22:53 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Mon Dec 6 2021 18:16:51 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

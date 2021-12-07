@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['resume_120',['resume',['../classSTM32Encoder.html#ab9133c7ac41f4ca78b59947dce1070a8',1,'STM32Encoder']]],
-  ['run_121',['run',['../classControl.html#ae2c9850df55d8aba73863d93a039dc25',1,'Control']]]
+  ['queue_133',['Queue',['../classQueue.html#ae4a3fd660457ea5f5a4f3605322db150',1,'Queue']]]
 ];
