@@ -80,17 +80,30 @@ void task_control(void* p_params)
     pinMode(limx, INPUT_PULLUP); 
     pinMode(limy, INPUT_PULLUP);
 
-    uint8_t xNOThome = digitalRead(limx);
-    uint8_t yNOThome = digitalRead(limy);
+    //Flag values
+    uint8_t xNOThome;       //triggers flag if x limit switch has been clicked
+    uint8_t yNOThome;       //triggers flag if y limit switch has been clicked
+    bool firstx = false;    //triggers flag if first x position has been reached
+    bool firsty = false;    //triggers flag if first y position has been reached
+    bool x_ok = false;      //triggers flag if x position error is sufficiently low
+    bool y_ok = false;      //triggers flag if y position error is sufficiently low
+    uint8_t flag;           //triggers flag if last reference value has been received
 
-    bool firstx = false;
-    bool firsty = false;
+    //Driver setups
+    MotorDriver yMOT (inputA1, inputA2, enableA);
+    MotorDriver xMOT (inputB1, inputB2, enableB);
+    STM32Encoder yENC (TIM2, E1CHA, E1CHB);
+    STM32Encoder xENC (TIM3, E2CHA, E2CHB);
+    Control xCONT (0.01, 0.38);
+    Control yCONT (0.012, 0.5);
+    EMDriver mag (MagPin);
+
+    
     for(;;)
     {
-        unsigned long Startime = micros();
-        mag.enable();
         if(state ==0) //INIT State, find home setup everything
         {
+            mag.enable();
             xNOThome = digitalRead(limx);
             yNOThome = digitalRead(limy);
             //Turn on x motor until it reaches zero position
@@ -126,6 +139,7 @@ void task_control(void* p_params)
                 yMOT.set_duty(22);
                 x_ref = xref.get();
                 y_ref = yref.get();
+                flag = data_NOTavail.get();
                 state = 1;
             }
         }
@@ -202,7 +216,9 @@ void task_control(void* p_params)
             {
                 yCONT.Kd = 0.012; 
             }
-            else
+            
+
+            if (x_ok & y_ok & !flag)
             {
                 x_ref = xref.get();
                 y_ref = yref.get();
@@ -216,11 +232,48 @@ void task_control(void* p_params)
                 xdot_ref = speed*cos(ang);
                 ydot_ref = speed*sin(ang);
             }
+            
+            //Check if last data point has been retrieved and move to state 3 if it has
+            if (flag & x_ok & y_ok)
+            {
+                xMOT.Disable_MOT();
+                yMOT.Disable_MOT();
+                mag.disable();
+                state = 3;
+            }
+            else
+            {
+                xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+                xMOT.set_duty(xCONT.PWM);
+                yCONT.run(y_ref, y_pos, ydot_ref, y_vel);
+                yMOT.set_duty(yCONT.PWM);   
+            }
 
+            // Serial << "You are in state " << state << endl;
+            // Serial << "Data not available?: " << flag << endl;
+            // Serial << "x pos: " << x_pos << "[in]"<< endl;
+            // Serial << "y pos: " << y_pos << "[in]"<< endl;
+            // Serial << "x ref: " << x_ref << "[in]"<< endl;
+            // Serial << "y ref: " << y_ref << "[in]"<< endl;
+            // Serial << "x error: " << x_dist << "[in]"<< endl;
+            // Serial << "y error: " << y_dist << "[in]"<< endl << endl;
+            // Serial << "x vel: " << x_vel << "[in/s]"<< endl;
+            // Serial << "y vel: " << y_vel << "[in/s]"<< endl;
+            // Serial << "x vel ref: " << xdot_ref << "[in/s]"<< endl;
+            // Serial << "y vel ref: " << ydot_ref << "[in/s]"<< endl;
+            // Serial << "x vel error: " << xdot_ref - x_vel << "[in/s]"<< endl;
+            // Serial << "y vel error: " << ydot_ref - y_vel << "[in/s]"<< endl << endl;
+            // Serial << "xPWM_pos: " << xCONT.PWM_pos << "%" << endl;
+            // Serial << "yPWM_pos: " << yCONT.PWM_pos << "%" << endl;            
+            // Serial << "xPWM_vel: " << xCONT.PWM_vel << "%" << endl;
+            // Serial << "yPWM_vel: " << yCONT.PWM_vel << "%" << endl;            
+            // Serial << "xPWM: " << xCONT.PWM << "%" << endl;
+            // Serial << "yPWM: " << yCONT.PWM << "%" << endl;
+            // Serial <<"-----------------------------------------------------------------------------------------------------" <<endl;
         }
         else if(state ==3) //Idle
         {
-            mag.disable();
+            Serial << "State 3" << endl;
         }
         vTaskDelay(delay_val);
     }
