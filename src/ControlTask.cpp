@@ -94,14 +94,16 @@ void task_control(void* p_params)
     MotorDriver xMOT (inputB1, inputB2, enableB);
     STM32Encoder yENC (TIM2, E1CHA, E1CHB);
     STM32Encoder xENC (TIM3, E2CHA, E2CHB);
-    Control xCONT (0.012, 0.4);
+    Control xCONT (0.01, 0.38);
     Control yCONT (0.012, 0.5);
     EMDriver mag (MagPin);
+
+    
     for(;;)
     {
-        mag.enable();
         if(state ==0) //INIT State, find home setup everything
         {
+            mag.enable();
             xNOThome = digitalRead(limx);
             yNOThome = digitalRead(limy);
             //Turn on x motor until it reaches zero position
@@ -137,6 +139,7 @@ void task_control(void* p_params)
                 yMOT.set_duty(22);
                 x_ref = xref.get();
                 y_ref = yref.get();
+                flag = data_NOTavail.get();
                 state = 1;
             }
         }
@@ -214,8 +217,8 @@ void task_control(void* p_params)
                 yCONT.Kd = 0.012; 
             }
             
-            //Retrieve next set of data points if x and y error is acceptable
-            if (x_ok & y_ok)
+
+            if (x_ok & y_ok & !flag)
             {
                 x_ref = xref.get();
                 y_ref = yref.get();
@@ -230,19 +233,22 @@ void task_control(void* p_params)
                 ydot_ref = speed*sin(ang);
             }
             
-            xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
-            xMOT.set_duty(xCONT.PWM);
-            yCONT.run(y_ref, y_pos, ydot_ref, y_vel);
-            yMOT.set_duty(yCONT.PWM);   
-            
             //Check if last data point has been retrieved and move to state 3 if it has
-            if (flag)
+            if (flag & x_ok & y_ok)
             {
                 xMOT.Disable_MOT();
                 yMOT.Disable_MOT();
                 mag.disable();
                 state = 3;
             }
+            else
+            {
+                xCONT.run(x_ref, x_pos, xdot_ref, x_vel);
+                xMOT.set_duty(xCONT.PWM);
+                yCONT.run(y_ref, y_pos, ydot_ref, y_vel);
+                yMOT.set_duty(yCONT.PWM);   
+            }
+
             // Serial << "You are in state " << state << endl;
             // Serial << "Data not available?: " << flag << endl;
             // Serial << "x pos: " << x_pos << "[in]"<< endl;
@@ -267,6 +273,7 @@ void task_control(void* p_params)
         }
         else if(state ==3) //Idle
         {
+            Serial << "State 3" << endl;
         }
         vTaskDelay(delay_val);
     }
