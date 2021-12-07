@@ -1,5 +1,8 @@
 /** @file ControlTask.cpp
  *  This file contains a task for controlling the Zen Gardener's magnet position
+ * 
+ *  Source code available here:
+ *  https://github.com/chstanto/Zen_Garden/blob/main/src/ControlTask.cpp
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    2021-Nov-29 Original file
@@ -58,36 +61,61 @@ void task_control(void* p_params)
     (void)p_params;                             // Shuts up a compiler warning
     uint8_t state = 0;
     //Position and velocity declarations
-    float x_pos = 0;        //Current x position, [in]                   
-    float y_pos = 0;        //Current y position, [in]
-    float x_vel = 0;        //Current x velocity, [in/s]
-    float y_vel = 0;        //Current y velocity, [in/s]
-    float x_last = 0;       //Previous x position reading, [in]
-    float y_last = 0;       //Previous y position reading, [in]
-    float x_ref = 0;        //Reference x position, [in]
-    float y_ref = 0;        //Reference y position, [in]
-    float xdot_ref = 0;     //Reference x velocity, [in/s]
-    float ydot_ref = 0;     //Reference y velocity, [in/s]
-    float speed = 1;        //Desired operating speed, [in/s]
-    float x_dist = 0;       //x error, [in]
-    float y_dist = 0;       //y error, [in]
-    float ang = 0;          //Angle of reference velocity vector [rad]
-    float err = 0.25;        //Control system's acceptable error [in]
-    unsigned long last_time = 0;    //Clock value [ms]
-    uint8_t delay_val = 10; //vTaskDelay value [ms]
+
+    /// @brief Current x position, [in]       
+    float x_pos = 0;      
+    /// @brief Current y position, [in]     
+    float y_pos = 0;       
+    /// @brief Current x velocity, [in/s]
+    float x_vel = 0;
+    /// @brief Current y velocity, [in/s]
+    float y_vel = 0;    
+    /// @brief Previous x position reading, [in]    
+    float x_last = 0;  
+    /// @brief Previous y position reading, [in]    
+    float y_last = 0;    
+    /// @brief Reference x position, [in]   
+    float x_ref = 0;        
+    /// @brief Reference y position, [in]
+    float y_ref = 0;    
+    /// @brief Reference x velocity, [in/s]    
+    float xdot_ref = 0;    
+    /// @brief Reference y velocity, [in/s] 
+    float ydot_ref = 0;    
+    /// @brief Desired operating speed, [in/s] 
+    float speed = 1;  
+    /// @brief x error, [in]      
+    float x_dist = 0;       
+    /// @brief y error, [in]
+    float y_dist = 0;      
+    /// @brief Angle of reference velocity vector [rad]
+    float ang = 0;        
+    /// @brief Control system's acceptable error [in]  
+    float err = 0.25;        
+    /// @brief Clock value [ms]
+    unsigned long last_time = 0;  
+    /// @brief vTaskDelay value [ms]  
+    uint8_t delay_val = 10; 
     
     //Configure limit switch pins as input pullups
     pinMode(limx, INPUT_PULLUP); 
     pinMode(limy, INPUT_PULLUP);
 
     //Flag values
-    uint8_t xNOThome;       //triggers flag if x limit switch has been clicked
-    uint8_t yNOThome;       //triggers flag if y limit switch has been clicked
-    bool firstx = false;    //triggers flag if first x position has been reached
-    bool firsty = false;    //triggers flag if first y position has been reached
-    bool x_ok = false;      //triggers flag if x position error is sufficiently low
-    bool y_ok = false;      //triggers flag if y position error is sufficiently low
-    uint8_t flag;           //triggers flag if last reference value has been received
+    /// @brief triggers flag if x limit switch has been clicked
+    uint8_t xNOThome;     
+    /// @brief triggers flag if y limit switch has been clicked  
+    uint8_t yNOThome;     
+    /// @brief triggers flag if first x position has been reached  
+    bool firstx = false;    
+    /// @brief triggers flag if first y position has been reached
+    bool firsty = false;   
+    /// @brief triggers flag if x position error is sufficiently low
+    bool x_ok = false;    
+    /// @brief triggers flag if y position error is sufficiently low 
+    bool y_ok = false;    
+    /// @brief triggers flag if last reference value has been received 
+    uint8_t flag;          
 
     //Driver setups
     MotorDriver yMOT (inputA1, inputA2, enableA);

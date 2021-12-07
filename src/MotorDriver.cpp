@@ -1,5 +1,8 @@
 /** @file MotorDriver.cpp
  *  This class is responsible for setting up a driver to interact with motors
+ * 
+ *  Source code available here:
+ *  @c https://github.com/chstanto/Zen_Garden/blob/main/src/MotorDriver.cpp
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    28-Oct-2020 Original file

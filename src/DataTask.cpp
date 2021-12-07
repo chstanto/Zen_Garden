@@ -1,5 +1,8 @@
 /** @file DataTask.cpp
  *  This file contains a task for sending and receiving data to the Control Task
+ * 
+ *  Source code available here:
+ *  https://github.com/chstanto/Zen_Garden/blob/main/src/DataTask.cpp
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    2021-Dec-1 Original file
@@ -21,9 +24,13 @@
 // uint8_t length = 21;
 
 //Circle Design
+/// @brief preset reference x position data
 float x_ref[37] = {7.000,6.954,6.819,6.598,6.298,5.928,5.500,5.026,4.521,4.000,3.479,2.974,2.500,2.072,1.702,1.402,1.181,1.046,1.000,1.046,1.181,1.402,1.702,2.072,2.500,2.974,3.479,4.000,4.521,5.026,5.500,5.928,6.298,6.598,6.819,6.954,7.000};
+/// @brief preset reference y position data
 float y_ref[37] = {4.000,4.521,5.026,5.500,5.928,6.298,6.598,6.819,6.954,7.000,6.954,6.819,6.598,6.298,5.928,5.500,5.026,4.521,4.000,3.479,2.974,2.500,2.072,1.702,1.402,1.181,1.046,1.000,1.046,1.181,1.402,1.702,2.072,2.500,2.974,3.479,4.000};
+/// @brief preset data availability array
 uint8_t data[37] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+/// @brief length of data arrays
 uint8_t length = 37;
 
 /** @brief   Task which sends data to ControlTask.h

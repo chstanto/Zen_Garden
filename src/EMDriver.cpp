@@ -1,5 +1,8 @@
 /** @file EMDriver.cpp
  *  This class is responsible for setting up a driver to interact with the electromagnet
+ * 
+ *  Source code available here:
+ *  @c https://github.com/chstanto/Zen_Garden/blob/main/src/EMDriver.cpp
  *  @author  Aaron Tran
  *  @date    2021-Nov-30 Original file
  */

@@ -1,5 +1,8 @@
 /** @file main.cpp
  *  This file contains a program for running the Mechatronic Zen Garden.
+ *  
+ *  Source code available here:
+ *  @c https://github.com/chstanto/Zen_Garden/blob/main/src/main.cpp
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    28-Oct-2020 Original file
@@ -25,9 +28,15 @@
 #include "DataTask.h"
 
 //Queue declarations
-Queue<float> xref(50, "X Data");          //Zen Garden x position data
-Queue<float> yref(50, "Y Data");          //Zen Garden y position data
-Queue<uint8_t> data_NOTavail(50, "Data"); //Array of mostly zeros with just a one at the end to signify all data has been sent
+
+/// @brief Zen Garden x position data
+Queue<float> xref(50, "X Data");
+
+/// @brief Zen Garden y position data
+Queue<float> yref(50, "Y Data");          
+
+/// @brief Array of mostly zeros with just a one at the end to signify all data has been sent
+Queue<uint8_t> data_NOTavail(50, "Data"); 
 
 
 //Pin definition for testing
@@ -62,6 +71,10 @@ bool yzero = false;
 */
 
 //Task Scheduler
+/** @brief   Arduino setup function which runs once at program startup.
+ *  @details This function sets up a serial port for communication and creates
+ *           the tasks which will be run.
+ */
 void setup () 
 {
     // Start the serial port, wait a short time, then say hello. Use the
@@ -94,6 +107,12 @@ void setup ()
     #endif
 }
 
+/** @brief   Arduino's low-priority loop function, which we don't use.
+ *  @details A non-RTOS Arduino program runs all of its continuously running
+ *           code in this function after @c setup() has finished. When using
+ *           FreeRTOS, @c loop() implements a low priority task on most
+ *           microcontrollers and crashes on some others, so we'll not use it.
+ */
 void loop()
 {
 

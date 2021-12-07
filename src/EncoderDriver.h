@@ -6,8 +6,17 @@
  *    with no guarantees; YMMV. Valuable assistance was found at 
  *    @c https://www.edwinfairchild.com/2019/04/interface-rotary-encoder-right-way.html
  * 
+ *    This file has been modified from code by JR Ridgeley for our purposes. Original code is 
+ *    at @c https://github.com/spluttflob/ME507-Support/blob/master/examples/encoder_counter.h
+ * 
+ *    Source code available here:
+ *    @c https://github.com/chstanto/Zen_Garden/blob/main/src/EncoderDriver.h
+ * 
  *  @author JR Ridgely
+ *  @author Aaron Tran
+ *  @author Cole Stanton
  *  @date   2020-Nov-15 Original file
+ *  @date   2021-Dec-6 modified to work with specific encoders
  */
 
 #include <Arduino.h>
@@ -70,12 +79,17 @@ public:
         p_timer->resume ();
     }
 
+    /** @brief  Updates count value accounting for overflow
+    */
     int32_t update (void);
 
+    /// @brief  Current count value, ready for use
     uint16_t ctNow;
 
+    /// @brief  Internal count value, unprocessed
     int32_t realCt;
 
+    /// @brief Change in internal count value
     int32_t delta;
 
 };

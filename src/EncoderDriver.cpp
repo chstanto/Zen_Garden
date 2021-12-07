@@ -1,4 +1,4 @@
-/** @file EncoderDriver.cpp
+/** @file EncoderDriver.h
  *    This file contains a class which allows timer/counters on an STM32 to be
  *    used to read quadrature encoders within the Arduino environment. This 
  *    code is a bit kludgey, as it was put together quickly in response to a
@@ -6,13 +6,18 @@
  *    with no guarantees; YMMV. Valuable assistance was found at 
  *    @c https://www.edwinfairchild.com/2019/04/interface-rotary-encoder-right-way.html
  * 
- *    There are specific pins which must be used for each timer, though some
- *    timers allow one to choose between two sets of pins. 
+ *    This file has been modified from code by JR Ridgeley for our purposes. Original code is 
+ *    at @c https://github.com/spluttflob/ME507-Support/blob/master/examples/encoder_counter.cpp
+ * 
+ *    Source code available here:
+ *    @c https://github.com/chstanto/Zen_Garden/blob/main/src/EncoderDriver.cpp
  * 
  *  @author JR Ridgely
+ *  @author Aaron Tran
+ *  @author Cole Stanton
  *  @date   2020-Nov-15 Original file
+ *  @date   2021-Dec-6 modified to work with specific encoders
  */
-
 #include "EncoderDriver.h"
 
 
@@ -69,6 +74,10 @@ STM32Encoder::STM32Encoder (TIM_TypeDef* timer, uint8_t pin1, uint8_t pin2)
 
     realCt = p_timer ->getCount();
 }
+
+
+/** @brief  Updates count value accounting for overflow
+ */
 
 int32_t STM32Encoder::update(void)
 {

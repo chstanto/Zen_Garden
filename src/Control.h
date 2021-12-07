@@ -1,5 +1,8 @@
-/** @file Control.h
+/** @file Control.cpp
  *  This class is responsible for computing the PWM for motors based off of position PD Control
+ *  
+ *  Source code available here:
+ *  @c https://github.com/chstanto/Zen_Garden/blob/main/src/Control.h
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    2021-Nov-30 Original file
@@ -18,11 +21,18 @@ class Control
     //Runs control system to calculate PWM
     void run(float pos_ref, float pos, float vel_ref, float vel);
     
-    float Kd = 1.003; // Derivative gain
-    float Kp = 0.0203; // Proportional gain
+    /// @brief Derivative gain
+    float Kd = 1.003; 
 
-    //PWM values
+    /// @brief Proportional gain
+    float Kp = 0.0203; 
+
+    /// @brief velocity error contribution to PWM
     float PWM_vel;
+
+    /// @brief position error contribution to PWM
     float PWM_pos;
+
+    /// @brief PWM sent to motors
     float PWM;
 };

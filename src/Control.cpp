@@ -1,5 +1,8 @@
 /** @file Control.cpp
  *  This class is responsible for computing the PWM for motors based off of position PD Control
+ *  
+ *  Source code available here:
+ *  @c https://github.com/chstanto/Zen_Garden/blob/main/src/Control.cpp
  *  @author  Aaron Tran
  *  @author  Cole Stanton
  *  @date    2021-Nov-30 Original file
@@ -9,7 +12,7 @@
 
 /** @brief  Instantiates control system object
  *  @param  vel_gain positional derivative gain, or velocity gain
- *  @param  motP2 positional proportional gain, or positional gain
+ *  @param  pos_gain positional proportional gain, or positional gain
  */
 Control::Control(float vel_gain, float pos_gain)
 {
