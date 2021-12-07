@@ -72,7 +72,7 @@ void task_control(void* p_params)
     float x_dist = 0;       //x error, [in]
     float y_dist = 0;       //y error, [in]
     float ang = 0;          //Angle of reference velocity vector [rad]
-    float err = 0.3;        //Control system's acceptable error [in]
+    float err = 0.25;        //Control system's acceptable error [in]
     unsigned long last_time = 0;    //Clock value [ms]
     uint8_t delay_val = 10; //vTaskDelay value [ms]
     
