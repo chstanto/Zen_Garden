@@ -25,9 +25,9 @@
 #include "DataTask.h"
 
 //Queue declarations
-Queue<float> xref(50, "X Data");          //Zen Garden x position data
-Queue<float> yref(50, "Y Data");          //Zen Garden y position data
-Queue<uint8_t> data_NOTavail(50, "Data"); //Array of mostly zeros with just a one at the end to signify all data has been sent
+Queue<float> xref(30, "X Data");          //Zen Garden x position data
+Queue<float> yref(30, "Y Data");          //Zen Garden y position data
+Queue<uint8_t> data_NOTavail(30, "Data"); //Array of mostly zeros with just a one at the end to signify all data has been sent
 
 
 //Pin definition for testing
@@ -76,7 +76,7 @@ void setup ()
                  "data",
                  4096,                            // Stack size
                  NULL,
-                 1,                               // Priority
+                 2,                               // Priority
                  NULL);
 
     // Create a task that implements the different machine states and control system.
@@ -84,7 +84,7 @@ void setup ()
                  "control",
                  2048,                            // Stack size
                  NULL,
-                 2,                               // Priority
+                 1,                               // Priority
                  NULL);
 
     // If using an STM32, we need to call the scheduler startup function now;
