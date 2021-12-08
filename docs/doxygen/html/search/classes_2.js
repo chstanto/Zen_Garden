@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dataclass_85',['DataClass',['../classDataClass.html',1,'']]]
+  ['dataclass_86',['DataClass',['../classDataClass.html',1,'']]]
 ];

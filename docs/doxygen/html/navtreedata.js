@@ -25,6 +25,9 @@
 var NAVTREE =
 [
   [ "Mechatronic Zen Garden", "index.html", [
+    [ "Mechatronic Zen Garden Documentation", "index.html", [
+      [ "Introduction", "index.html#intro_sec", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
