@@ -107,45 +107,90 @@ $(document).ready(function(){initNavTree('main_8cpp.html',''); initResizable(); 
 <code>#include &quot;<a class="el" href="taskqueue_8h_source.html">taskqueue.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="shares_8h_source.html">shares.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="EncoderDriver_8h_source.html">EncoderDriver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="MotorDriver_8h_source.html">MotorDriver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="EMDriver_8h_source.html">EMDriver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Control_8h_source.html">Control.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ControlTask_8h_source.html">ControlTask.h</a>&quot;</code><br />
+<code>#include &quot;MotorDriver.h&quot;</code><br />
+<code>#include &quot;EMDriver.h&quot;</code><br />
+<code>#include &quot;Control.h&quot;</code><br />
+<code>#include &quot;ControlTask.h&quot;</code><br />
 <code>#include &quot;DataTask.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top"><a id="a4fc01d736fe50cf5b977f755b675f11d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
+<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
+<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arduino setup function which runs once at program startup.  <a href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d">More...</a><br /></td></tr>
 <tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top"><a id="afe461d27b9c48d5921c00d521181f12f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>loop</b> ()</td></tr>
+<tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
+<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arduino's low-priority loop function, which we don't use.  <a href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f">More...</a><br /></td></tr>
 <tr class="separator:afe461d27b9c48d5921c00d521181f12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a9b74590880b819dcb4dadedb139c5369"><td class="memItemLeft" align="right" valign="top"><a id="a9b74590880b819dcb4dadedb139c5369"></a>
-<a class="el" href="classQueue.html">Queue</a>&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>xref</b> (50, &quot;X Data&quot;)</td></tr>
+<a class="el" href="classQueue.html">Queue</a>&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a9b74590880b819dcb4dadedb139c5369">xref</a> (50, &quot;X Data&quot;)</td></tr>
+<tr class="memdesc:a9b74590880b819dcb4dadedb139c5369"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zen Garden x position data. <br /></td></tr>
 <tr class="separator:a9b74590880b819dcb4dadedb139c5369"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7c6abbe203b615b04b76b164031406d"><td class="memItemLeft" align="right" valign="top"><a id="ae7c6abbe203b615b04b76b164031406d"></a>
-<a class="el" href="classQueue.html">Queue</a>&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>yref</b> (50, &quot;Y Data&quot;)</td></tr>
+<a class="el" href="classQueue.html">Queue</a>&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae7c6abbe203b615b04b76b164031406d">yref</a> (50, &quot;Y Data&quot;)</td></tr>
+<tr class="memdesc:ae7c6abbe203b615b04b76b164031406d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zen Garden y position data. <br /></td></tr>
 <tr class="separator:ae7c6abbe203b615b04b76b164031406d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83d172e1bbffdc2cf98dc7afdbdd993d"><td class="memItemLeft" align="right" valign="top"><a id="a83d172e1bbffdc2cf98dc7afdbdd993d"></a>
-<a class="el" href="classQueue.html">Queue</a>&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data_NOTavail</b> (50, &quot;Data&quot;)</td></tr>
+<a class="el" href="classQueue.html">Queue</a>&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a83d172e1bbffdc2cf98dc7afdbdd993d">data_NOTavail</a> (50, &quot;Data&quot;)</td></tr>
+<tr class="memdesc:a83d172e1bbffdc2cf98dc7afdbdd993d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of mostly zeros with just a one at the end to signify all data has been sent. <br /></td></tr>
 <tr class="separator:a83d172e1bbffdc2cf98dc7afdbdd993d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This file contains a program for running the Mechatronic Zen Garden. </p><dl class="section author"><dt>Author</dt><dd>Aaron Tran </dd>
+<div class="textblock"><p>This file contains a program for running the Mechatronic Zen Garden.</p>
+<p>Source code available here: <code><a href="https://github.com/chstanto/Zen_Garden/blob/main/src/main.cpp">https://github.com/chstanto/Zen_Garden/blob/main/src/main.cpp</a></code> </p><dl class="section author"><dt>Author</dt><dd>Aaron Tran </dd>
 <dd>
 Cole Stanton </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>28-Oct-2020 Original file </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="afe461d27b9c48d5921c00d521181f12f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe461d27b9c48d5921c00d521181f12f">&#9670;&nbsp;</a></span>loop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void loop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Arduino's low-priority loop function, which we don't use. </p>
+<p>A non-RTOS Arduino program runs all of its continuously running code in this function after <code><a class="el" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d" title="Arduino setup function which runs once at program startup.">setup()</a></code> has finished. When using FreeRTOS, <code><a class="el" href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title="Arduino&#39;s low-priority loop function, which we don&#39;t use.">loop()</a></code> implements a low priority task on most microcontrollers and crashes on some others, so we'll not use it. </p>
+
+</div>
+</div>
+<a id="a4fc01d736fe50cf5b977f755b675f11d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fc01d736fe50cf5b977f755b675f11d">&#9670;&nbsp;</a></span>setup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setup </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Arduino setup function which runs once at program startup. </p>
+<p>This function sets up a serial port for communication and creates the tasks which will be run. </p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="main_8cpp.html">main.cpp</a></li>
-    <li class="footer">Generated on Mon Dec 6 2021 17:22:53 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Mon Dec 6 2021 18:16:51 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

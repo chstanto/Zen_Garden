@@ -98,36 +98,43 @@ $(document).ready(function(){initNavTree('Control_8h_source.html',''); initResiz
 <div class="title">Control.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Control_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classControl.html">   10</a></span>&#160;<span class="keyword">class </span><a class="code" href="classControl.html">Control</a></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">//Constructor</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="classControl.html#a2e10113dbd65017abd3be52fe57b58c0">Control</a>(<span class="keywordtype">float</span> vel_gain, <span class="keywordtype">float</span> pos_gain);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="comment">//Runs control system to calculate PWM</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControl.html#ae2c9850df55d8aba73863d93a039dc25">run</a>(<span class="keywordtype">float</span> pos_ref, <span class="keywordtype">float</span> pos, <span class="keywordtype">float</span> vel_ref, <span class="keywordtype">float</span> vel);</div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classControl.html">   13</a></span>&#160;<span class="keyword">class </span><a class="code" href="classControl.html">Control</a></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="comment">//Constructor</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="classControl.html#a2e10113dbd65017abd3be52fe57b58c0">Control</a>(<span class="keywordtype">float</span> vel_gain, <span class="keywordtype">float</span> pos_gain);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">float</span> Kd = 1.003; <span class="comment">// Derivative gain</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordtype">float</span> Kp = 0.0203; <span class="comment">// Proportional gain</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">//PWM values</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">float</span> PWM_vel;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">float</span> PWM_pos;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">float</span> PWM;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">//Runs control system to calculate PWM</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControl.html#ae2c9850df55d8aba73863d93a039dc25">run</a>(<span class="keywordtype">float</span> pos_ref, <span class="keywordtype">float</span> pos, <span class="keywordtype">float</span> vel_ref, <span class="keywordtype">float</span> vel);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classControl.html#ae35e45738a7c48f7f67115cc3a072ec5">   25</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classControl.html#ae35e45738a7c48f7f67115cc3a072ec5">Kd</a> = 1.003; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classControl.html#ad4da24bd0a10cf9cb2d064503b1e8bc9">   28</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classControl.html#ad4da24bd0a10cf9cb2d064503b1e8bc9">Kp</a> = 0.0203; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classControl.html#a3376ec3d84a6df1b0ddd42646b55ba4c">   31</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classControl.html#a3376ec3d84a6df1b0ddd42646b55ba4c">PWM_vel</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classControl.html#a8a2a2d5a7e0eee56533ae630e0fd1581">   34</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classControl.html#a8a2a2d5a7e0eee56533ae630e0fd1581">PWM_pos</a>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classControl.html#a4a27737d116db366ea857ec421569251">   37</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classControl.html#a4a27737d116db366ea857ec421569251">PWM</a>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassControl_html"><div class="ttname"><a href="classControl.html">Control</a></div><div class="ttdoc">Class for implementing Mechatronic Zen Garden control system.</div><div class="ttdef"><b>Definition:</b> Control.h:11</div></div>
-<div class="ttc" id="aclassControl_html_ae2c9850df55d8aba73863d93a039dc25"><div class="ttname"><a href="classControl.html#ae2c9850df55d8aba73863d93a039dc25">Control::run</a></div><div class="ttdeci">void run(float pos_ref, float pos, float vel_ref, float vel)</div><div class="ttdoc">Computes PWM based on positional error and velocity error.</div><div class="ttdef"><b>Definition:</b> Control.cpp:27</div></div>
-<div class="ttc" id="aclassControl_html_a2e10113dbd65017abd3be52fe57b58c0"><div class="ttname"><a href="classControl.html#a2e10113dbd65017abd3be52fe57b58c0">Control::Control</a></div><div class="ttdeci">Control(float vel_gain, float pos_gain)</div><div class="ttdoc">Instantiates control system object.</div><div class="ttdef"><b>Definition:</b> Control.cpp:14</div></div>
+<div class="ttc" id="aclassControl_html"><div class="ttname"><a href="classControl.html">Control</a></div><div class="ttdoc">Class for implementing Mechatronic Zen Garden control system.</div><div class="ttdef"><b>Definition:</b> Control.h:14</div></div>
+<div class="ttc" id="aclassControl_html_a3376ec3d84a6df1b0ddd42646b55ba4c"><div class="ttname"><a href="classControl.html#a3376ec3d84a6df1b0ddd42646b55ba4c">Control::PWM_vel</a></div><div class="ttdeci">float PWM_vel</div><div class="ttdoc">velocity error contribution to PWM</div><div class="ttdef"><b>Definition:</b> Control.h:31</div></div>
+<div class="ttc" id="aclassControl_html_ae2c9850df55d8aba73863d93a039dc25"><div class="ttname"><a href="classControl.html#ae2c9850df55d8aba73863d93a039dc25">Control::run</a></div><div class="ttdeci">void run(float pos_ref, float pos, float vel_ref, float vel)</div><div class="ttdoc">Computes PWM based on positional error and velocity error.</div><div class="ttdef"><b>Definition:</b> Control.cpp:30</div></div>
+<div class="ttc" id="aclassControl_html_a2e10113dbd65017abd3be52fe57b58c0"><div class="ttname"><a href="classControl.html#a2e10113dbd65017abd3be52fe57b58c0">Control::Control</a></div><div class="ttdeci">Control(float vel_gain, float pos_gain)</div><div class="ttdoc">Instantiates control system object.</div><div class="ttdef"><b>Definition:</b> Control.cpp:17</div></div>
+<div class="ttc" id="aclassControl_html_ad4da24bd0a10cf9cb2d064503b1e8bc9"><div class="ttname"><a href="classControl.html#ad4da24bd0a10cf9cb2d064503b1e8bc9">Control::Kp</a></div><div class="ttdeci">float Kp</div><div class="ttdoc">Proportional gain.</div><div class="ttdef"><b>Definition:</b> Control.h:28</div></div>
+<div class="ttc" id="aclassControl_html_ae35e45738a7c48f7f67115cc3a072ec5"><div class="ttname"><a href="classControl.html#ae35e45738a7c48f7f67115cc3a072ec5">Control::Kd</a></div><div class="ttdeci">float Kd</div><div class="ttdoc">Derivative gain.</div><div class="ttdef"><b>Definition:</b> Control.h:25</div></div>
+<div class="ttc" id="aclassControl_html_a8a2a2d5a7e0eee56533ae630e0fd1581"><div class="ttname"><a href="classControl.html#a8a2a2d5a7e0eee56533ae630e0fd1581">Control::PWM_pos</a></div><div class="ttdeci">float PWM_pos</div><div class="ttdoc">position error contribution to PWM</div><div class="ttdef"><b>Definition:</b> Control.h:34</div></div>
+<div class="ttc" id="aclassControl_html_a4a27737d116db366ea857ec421569251"><div class="ttname"><a href="classControl.html#a4a27737d116db366ea857ec421569251">Control::PWM</a></div><div class="ttdeci">float PWM</div><div class="ttdoc">PWM sent to motors.</div><div class="ttdef"><b>Definition:</b> Control.h:37</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="Control_8h.html">Control.h</a></li>
-    <li class="footer">Generated on Mon Dec 6 2021 17:22:53 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><b>Control.h</b></li>
+    <li class="footer">Generated on Mon Dec 6 2021 18:16:51 for Mechatronic Zen Garden by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

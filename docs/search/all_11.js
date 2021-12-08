@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['zero_64',['zero',['../classSTM32Encoder.html#af1b3a03d36f25377333a24a5b6346219',1,'STM32Encoder']]]
+  ['task_5fcontrol_71',['task_control',['../ControlTask_8cpp.html#a1c626f59becb67075cd4a0c92eb6c4b1',1,'ControlTask.cpp']]],
+  ['task_5fdata_72',['task_data',['../DataTask_8cpp.html#aa13051474ce28b24223039759aafbe71',1,'DataTask.cpp']]],
+  ['taskqueue_2eh_73',['taskqueue.h',['../taskqueue_8h.html',1,'']]],
+  ['taskshare_2eh_74',['taskshare.h',['../taskshare_8h.html',1,'']]],
+  ['ticks_5fto_5fwait_75',['ticks_to_wait',['../classQueue.html#ac7869eacf6bc024b4d8ce25496fdaaed',1,'Queue']]]
 ];
